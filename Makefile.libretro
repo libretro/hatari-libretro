@@ -20,18 +20,18 @@ ifeq ($(platform), android)
    TARGET := libretro-hatari.so
    fpic := -fPIC
    SHARED :=  -Wl,--fix-cortex-a8 -llog -lz -shared -Wl,--version-script=$(LIBRETRO)/link.T -Wl,--no-undefined
-   PLATFLAGS :=   -DRETRO -DAND -DLSB_FIRST -DALIGN_DWORD  -D__LIBRETRO__
+   PLATFLAGS := -DAND -DLSB_FIRST -DALIGN_DWORD  -D__LIBRETRO__
 else ifeq ($(platform), unix)
    CC = gcc
    TARGET := libretro-hatari.so
    fpic := -fPIC
    SHARED :=  -lz -lpthread -shared -Wl,--version-script=$(LIBRETRO)/link.T -Wl,--no-undefined
-   PLATFLAGS :=  -DRETRO -DLSB_FIRST -DALIGN_DWORD  -D__LIBRETRO__
+   PLATFLAGS := -DLSB_FIRST -DALIGN_DWORD  -D__LIBRETRO__
 else ifeq ($(platform), osx)
    TARGET := libretro.dylib
    fpic := -fPIC
    SHARED := -dynamiclib
-   PLATFLAGS :=  -DRETRO -DLSB_FIRST -DALIGN_DWORD  -D__LIBRETRO__
+   PLATFLAGS := -DLSB_FIRST -DALIGN_DWORD  -D__LIBRETRO__
 else ifeq ($(platform), wii)
    TARGET := hatari_libretro_wii.a
    CC = $(DEVKITPPC)/bin/powerpc-eabi-gcc$(EXE_EXT)
@@ -46,7 +46,7 @@ else ifeq ($(platform), wii)
 	-DWIIPORT=1 -DHAVE_MEMALIGN -DHAVE_ASPRINTF -I$(ZLIB_DIR) -I$(DEVKITPRO)/libogc/include \
 	-D__powerpc__ -D__POWERPC__ -DGEKKO -DHW_RVL -mrvl -mcpu=750 -meabi -mhard-float -D__ppc__
    SHARED :=   -lm -lpthread -lc
-   PLATFLAGS :=  -DRETRO -DALIGN_DWORD -DWIIPORT
+   PLATFLAGS :=  -D__LIBRETRO__ -DALIGN_DWORD -DWIIPORT
 else ifeq ($(platform), ps3)
    TARGET := hatari_libretro_ps3.a
    CC = $(CELL_SDK)/host-win32/ppu/bin/ppu-lv2-gcc.exe
@@ -60,11 +60,11 @@ else ifeq ($(platform), ps3)
    SHARED :=   -lm -lpthread -lc
    CFLAGS += -DSDL_BYTEORDER=SDL_BIG_ENDIAN -DMSB_FIRST -DBYTE_ORDER=BIG_ENDIAN  -DBYTE_ORDER=BIG_ENDIAN \
 	-D__CELLOS_LV2 -DPS3PORT=1 -DHAVE_MEMALIGN -DHAVE_ASPRINTF -I$(ZLIB_DIR) 
-   PLATFLAGS :=  -DRETRO -DALIGN_DWORD 
+   PLATFLAGS :=  -D__LIBRETRO__ -DALIGN_DWORD 
 else
    #CC = i586-mingw32msvc-gcc
    CC = x86_64-w64-mingw32-gcc
-   PLATFLAGS :=  -DRETRO -DLSB_FIRST -DALIGN_DWORD -DWIN32PORT -DWIN32
+   PLATFLAGS :=  -D__LIBRETRO__ -DLSB_FIRST -DALIGN_DWORD -DWIN32PORT -DWIN32
    TARGET := retro-hatari.dll
    SHARED := -shared -static-libgcc -s -Wl,--version-script=$(LIBRETRO)/link.T -Wl,--no-undefined 
 endif

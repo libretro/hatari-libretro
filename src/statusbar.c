@@ -150,7 +150,7 @@ int Statusbar_SetHeight(int width, int height)
 	int count = backtrace(addr, sizeof(addr)/sizeof(*addr));
 	backtrace_symbols_fd(addr, count, fileno(stderr));
 #endif
-#ifndef RETRO
+#ifndef __LIBRETRO__
 	ScreenHeight = height;
 	StatusbarHeight = Statusbar_GetHeightForSize(width, height);
 	DEBUGPRINT(("Statusbar_SetHeight(%d, %d) -> %d\n", width, height, StatusbarHeight));
@@ -160,7 +160,7 @@ return 0;
 #endif
 	return StatusbarHeight;
 }
-#ifdef RETRO
+#ifdef __LIBRETRO__
 int LEDA=0, LEDB=0, LEDC=0;
 #endif
 /*-----------------------------------------------------------------------*/
@@ -179,7 +179,7 @@ int Statusbar_GetHeight(void)
  */
 void Statusbar_EnableHDLed(drive_led_t state)
 {
-#ifndef RETRO
+#ifndef __LIBRETRO__
 	/* leds are shown for 1/2 sec after enabling */
 	Led[DRIVE_LED_HD].expire = SDL_GetTicks() + 1000/2;
 	Led[DRIVE_LED_HD].state = state;
@@ -197,7 +197,7 @@ void Statusbar_SetFloppyLed(drive_index_t drive, drive_led_t state)
 {
 	assert(drive == DRIVE_LED_A || drive == DRIVE_LED_B);
 	Led[drive].state = state;
-#ifdef RETRO
+#ifdef __LIBRETRO__
 if(drive == DRIVE_LED_A)
 if(state==true)LEDA=1;
 else LEDA=0;
@@ -215,7 +215,7 @@ else LEDB=0;
  */
 static void Statusbar_OverlayInit(const SDL_Surface *surf)
 {
-#ifndef RETRO
+#ifndef __LIBRETRO__
 	int h;
 	/* led size/pos needs to be re-calculated in case screen changed */
 	h = surf->h / 50;
@@ -243,7 +243,7 @@ static void Statusbar_OverlayInit(const SDL_Surface *surf)
  */
 void Statusbar_Init(SDL_Surface *surf)
 {
-#ifndef RETRO
+#ifndef __LIBRETRO__
 	msg_item_t *item;
 	SDL_Rect ledbox, sbarbox;
 	int i, fontw, fonth, offset;
@@ -492,7 +492,7 @@ void Statusbar_UpdateInfo(void)
  */
 static void Statusbar_DrawMessage(SDL_Surface *surf, const char *msg)
 {
-#ifndef RETRO
+#ifndef __LIBRETRO__
 	int fontw, fonth, offset;
 	SDL_FillRect(surf, &MessageRect, GrayBg);
 	if (*msg) {
@@ -552,7 +552,7 @@ void Statusbar_OverlayBackup(SDL_Surface *surf)
 		/* overlay not used with statusbar */
 		return;
 	}
-#ifndef RETRO
+#ifndef __LIBRETRO__
 	assert(surf);
 	if (!OverlayUnderside) {
 		SDL_Surface *bak;
@@ -575,7 +575,7 @@ void Statusbar_OverlayBackup(SDL_Surface *surf)
  */
 void Statusbar_OverlayRestore(SDL_Surface *surf)
 {
-#ifndef RETRO
+#ifndef __LIBRETRO__
 	if ((StatusbarHeight && ConfigureParams.Screen.bShowStatusbar)
 	    || !ConfigureParams.Screen.bShowDriveLed) {
 		/* overlay not used with statusbar */
@@ -596,7 +596,7 @@ void Statusbar_OverlayRestore(SDL_Surface *surf)
  */
 static void Statusbar_OverlayDrawLed(SDL_Surface *surf, Uint32 color)
 {
-#ifndef RETRO
+#ifndef __LIBRETRO__
 	SDL_Rect rect;
 	if (bOverlayState == OVERLAY_DRAWN) {
 		/* some led already drawn */
@@ -621,7 +621,7 @@ static void Statusbar_OverlayDrawLed(SDL_Surface *surf, Uint32 color)
  */
 static void Statusbar_OverlayDraw(SDL_Surface *surf)
 {
-#ifndef RETRO
+#ifndef __LIBRETRO__
 	Uint32 currentticks = SDL_GetTicks();
 	int i;
 
@@ -665,7 +665,7 @@ static void Statusbar_OverlayDraw(SDL_Surface *surf)
  */
 void Statusbar_Update(SDL_Surface *surf)
 {
-#ifndef RETRO
+#ifndef __LIBRETRO__
 	Uint32 color, currentticks;
 	SDL_Rect rect;
 	int i;

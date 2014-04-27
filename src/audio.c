@@ -117,7 +117,7 @@ static void Audio_CallBack(void *userdata, Uint8 *stream, int len)
  */
 void Audio_Init(void)
 {
-#ifndef RETRO
+#ifndef __LIBRETRO__
 	SDL_AudioSpec desiredAudioSpec;    /* We fill in the desired SDL audio options here */
 
 	/* Is enabled? */

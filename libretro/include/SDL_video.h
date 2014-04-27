@@ -37,13 +37,5 @@ typedef struct SDL_Surface {
 	/* This structure also contains private fields not shown here */
 } SDL_Surface;
 
-/*
-typedef struct
-{
-    int w, h;
-    int stride;    
-    unsigned char * bitmap;
-} SDL_Surface;
-*/
 
 #endif

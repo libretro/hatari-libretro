@@ -30,7 +30,7 @@ static int DesktopWidth, DesktopHeight;
  */
 void Resolution_Init(void)
 {
-#ifndef RETRO
+#ifndef __LIBRETRO__
 	/* Needs to be called after SDL video and configuration
 	 * initialization, but before Hatari Screen init is called
 	 * for the first time!
@@ -137,7 +137,7 @@ static bool Resolution_Select(SDL_Rect **modes, int *width, int *height)
  */
 bool Resolution_Search(int *width, int *height, int *bpp, bool keep)
 {
-#ifndef RETRO
+#ifndef __LIBRETRO__
 	SDL_Rect **modes;
 	SDL_PixelFormat pixelformat;
 	Uint32 modeflags;

@@ -76,7 +76,7 @@ const char AVIRecord_fileid[] = "Hatari avi_record.c : " __DATE__ " " __TIME__;
 
 //DEB RETRO HACK
 //TODO FIX OR REMOVE this file :( 
-#ifndef RETRO
+#ifndef __LIBRETRO__
 #include "pixel_convert.h"				/* inline functions */
 #else
 #include "retro_pixel_convert.h"				/* inline functions */
@@ -366,7 +366,7 @@ static int	Avi_GetBmpSize ( int Width , int Height , int BitCount )
 
 
 //DEB RETRO HACK
-#ifdef RETRO
+#ifdef __LIBRETRO__
 static inline void PixelConvert_rgb565to24Bits_BGR(Uint8 *dst, Uint16 *src, int w)
 {
 	int x;
@@ -401,7 +401,7 @@ static bool	Avi_RecordVideoStream_BMP ( RECORD_AVI_PARAMS *pAviParams )
 		return false;
 	}
 
-#ifndef RETRO
+#ifndef __LIBRETRO__
 
 	/* Write the video frame data */
 	NeedLock = SDL_MUSTLOCK( pAviParams->Surface );
@@ -1006,7 +1006,7 @@ bool	Avi_StartRecording ( char *FileName , bool CropGui , Uint32 Fps , Uint32 Fp
 	AviParams.AudioCodec = AVI_RECORD_AUDIO_CODEC_PCM;
 	AviParams.AudioFreq = ConfigureParams.Sound.nPlaybackFreq;
 //DEB RETRO HACK
-#ifndef RETRO
+#ifndef __LIBRETRO__
 	AviParams.Surface = sdlscrn;
 #else
 	AviParams.Surface = NULL;
