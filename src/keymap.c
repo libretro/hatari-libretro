@@ -8,6 +8,7 @@
 */
 const char Keymap_fileid[] = "Hatari keymap.c : " __DATE__ " " __TIME__;
 
+#include "SDL.h"
 #include <ctype.h>
 #include "main.h"
 #include "keymap.h"

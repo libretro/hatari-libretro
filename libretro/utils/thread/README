@@ -1,0 +1,20 @@
+Lightweight wrapper for threads/mutexes/condition
+variables.
+
+Has been tested on the following platforms:
+* PC (UNIX/Windows)
+* PlayStation3
+* Xbox 1
+* Xbox 360
+* Gamecube
+* Wii
+* Android
+* iOS
+* MacOSX
+* Blackberry QNX
+
+Has several implementations:
+* OGC LWP Threads (the Gamecube/Wii versions 
+uses a pthread wrapper to implement this) 
+* Win32 Threads (for Win32/Xbox 1/Xbox 360)
+* POSIX Threads

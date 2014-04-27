@@ -59,6 +59,10 @@ const char Main_fileid[] = "Hatari main.c : " __DATE__ " " __TIME__;
 #include "falcon/hostscreen.h"
 #include "falcon/dsp.h"
 
+#ifdef RETRO
+#include "retromain.inc"
+#endif
+
 #if HAVE_GETTIMEOFDAY
 #include <sys/time.h>
 #endif
@@ -78,7 +82,7 @@ static bool bEmulationActive = true;      /* Run emulation when started */
 static bool bAccurateDelays;              /* Host system has an accurate SDL_Delay()? */
 static bool bIgnoreNextMouseMotion = false;  /* Next mouse motion will be ignored (needed after SDL_WarpMouse) */
 
-
+#ifndef RETRO
 /*-----------------------------------------------------------------------*/
 /**
  * Return current time as millisecond for performance measurements.
@@ -111,6 +115,9 @@ static Uint32 Main_GetTicks(void)
 #endif
 
 
+#else
+# define Main_GetTicks SDL_GetTicks
+#endif
 //#undef HAVE_GETTIMEOFDAY
 //#undef HAVE_NANOSLEEP
 
@@ -192,7 +199,7 @@ bool Main_PauseEmulation(bool visualize)
 			nVBLCount = nFirstMilliTick = 0;
 			previous = current;
 		}
-		
+	
 		Statusbar_AddMessage("Emulation paused", 100);
 		/* make sure msg gets shown */
 		Statusbar_Update(sdlscrn);
@@ -200,6 +207,7 @@ bool Main_PauseEmulation(bool visualize)
 		if (bGrabMouse && !bInFullScreen)
 			/* Un-grab mouse pointer in windowed mode */
 			SDL_WM_GrabInput(SDL_GRAB_OFF);
+
 	}
 	return true;
 }
@@ -217,6 +225,7 @@ bool Main_UnPauseEmulation(void)
 
 	Sound_BufferIndexNeedReset = true;
 	Audio_EnableAudio(ConfigureParams.Sound.bEnableSound);
+
 	bEmulationActive = true;
 
 	/* Cause full screen update (to clear all) */
@@ -225,6 +234,7 @@ bool Main_UnPauseEmulation(void)
 	if (bGrabMouse)
 		/* Grab mouse pointer again */
 		SDL_WM_GrabInput(SDL_GRAB_ON);
+
 	return true;
 }
 
@@ -253,6 +263,9 @@ void Main_RequestQuit(void)
 	{
 		/* Assure that CPU core shuts down */
 		M68000_SetSpecial(SPCFLAG_BRK);
+#ifdef RETRO
+		pauseg=-1;
+#endif
 	}
 }
 
@@ -278,12 +291,18 @@ void Main_SetRunVBLs(Uint32 vbls)
  * to "busy wait" there to get an accurate timing.
  * All times are expressed as micro seconds, to avoid too much rounding error.
  */
+
 void Main_WaitOnVbl(void)
 {
 	Sint64 CurrentTicks;
 	static Sint64 DestTicks = 0;
 	Sint64 FrameDuration_micro;
 	Sint64 nDelay;
+
+#ifdef RETRO
+	if(pauseg==1)pause_select();
+	co_switch(mainThread);
+#endif
 
 	nVBLCount++;
 	if (nRunVBLs &&	nVBLCount >= nRunVBLs)
@@ -398,7 +417,12 @@ static void Main_CheckForAccurateDelays(void)
  */
 void Main_WarpMouse(int x, int y)
 {
+#ifdef RETRO
+        fmousex=x;
+	fmousey=y;
+#else
 	SDL_WarpMouse(x, y);                  /* Set mouse pointer to new position */
+#endif
 	bIgnoreNextMouseMotion = true;        /* Ignore mouse motion event from SDL_WarpMouse */
 }
 
@@ -407,7 +431,11 @@ void Main_WarpMouse(int x, int y)
 /**
  * Handle mouse motion event.
  */
+#ifdef RETRO
+void Main_HandleMouseMotion()
+#else
 static void Main_HandleMouseMotion(SDL_Event *pEvent)
+#endif
 {
 	int dx, dy;
 	static int ax = 0, ay = 0;
@@ -419,10 +447,13 @@ static void Main_HandleMouseMotion(SDL_Event *pEvent)
 		bIgnoreNextMouseMotion = false;
 		return;
 	}
-
+#ifdef RETRO
+	dx = fmousex;
+	dy = fmousey;
+#else
 	dx = pEvent->motion.xrel;
 	dy = pEvent->motion.yrel;
-
+#endif
 	/* In zoomed low res mode, we divide dx and dy by the zoom factor so that
 	 * the ST mouse cursor stays in sync with the host mouse. However, we have
 	 * to take care of lowest bit of dx and dy which will get lost when
@@ -454,6 +485,11 @@ static void Main_HandleMouseMotion(SDL_Event *pEvent)
  */
 void Main_EventHandler(void)
 {
+
+#ifdef RETRO
+	if (ConfigureParams.Sound.bEnableSound)SND=1;
+	else SND=-1;
+#else
 	bool bContinueProcessing;
 	SDL_Event event;
 	int events;
@@ -559,6 +595,7 @@ void Main_EventHandler(void)
 			break;
 		}
 	} while (bContinueProcessing || !(bEmulationActive || bQuitProgram));
+#endif
 }
 
 
@@ -595,12 +632,18 @@ static void Main_Init(void)
 	if (!Log_Init())
 	{
 		fprintf(stderr, "Logging/tracing initialization failed\n");
+#ifndef RETRO
 		exit(-1);
+#else
+		pauseg=-1;
+#endif
+
 	}
 	Log_Printf(LOG_INFO, PROG_NAME ", compiled on:  " __DATE__ ", " __TIME__ "\n");
 
 	/* Init SDL's video subsystem. Note: Audio and joystick subsystems
 	   will be initialized later (failures there are not fatal). */
+
 	if (SDL_Init(SDL_INIT_VIDEO | Opt_GetNoParachuteFlag()) < 0)
 	{
 		fprintf(stderr, "Could not initialize the SDL library:\n %s\n", SDL_GetError() );
@@ -610,7 +653,11 @@ static void Main_Init(void)
 	if ( IPF_Init() != true )
 	{
 		fprintf(stderr, "Could not initialize the IPF support\n" );
+#ifndef RETRO
 		exit(-1);
+#else
+		pauseg=-1;
+#endif	
 	}
 
 	ClocksTimings_InitMachine ( ConfigureParams.System.nMachineType );
@@ -630,6 +677,7 @@ static void Main_Init(void)
 	DSP_Init();
 	Floppy_Init();
 //	FDC_Init();
+
 	M68000_Init();                /* Init CPU emulation */
 	Audio_Init();
 	Keymap_Init();
@@ -648,12 +696,21 @@ static void Main_Init(void)
 	{
 		/* If loading of the TOS failed, we bring up the GUI to let the
 		 * user choose another TOS ROM file. */
+#ifdef RETRO
+		pauseg=1;
+		pause_select();
+#else
 		Dialog_DoProperty();
+#endif
+
 	}
 	if (!bTosImageLoaded || bQuitProgram)
 	{
 		fprintf(stderr, "Failed to load TOS image!\n");
 		SDL_Quit();
+#ifdef RETRO
+		retro_shutdown_hatari();
+#endif 
 		exit(-2);
 	}
 
@@ -671,7 +728,11 @@ static void Main_Init(void)
 /**
  * Un-Initialise emulation
  */
+#ifndef RETRO
 static void Main_UnInit(void)
+#else
+void Main_UnInit(void)
+#endif
 {
 	Screen_ReturnFromFullScreen();
 	Floppy_UnInit();
@@ -737,6 +798,7 @@ static void Main_LoadInitialConfig(void)
  */
 static void Main_StatusbarSetup(void)
 {
+//#ifndef RETRO
 	const char *name = NULL;
 	SDLKey key;
 
@@ -759,6 +821,7 @@ static void Main_StatusbarSetup(void)
 	}
 	/* update information loaded by Main_Init() */
 	Statusbar_UpdateInfo();
+//#endif
 }
 
 /*-----------------------------------------------------------------------*/
@@ -767,7 +830,11 @@ static void Main_StatusbarSetup(void)
  * 
  * Note: 'argv' cannot be declared const, MinGW would then fail to link.
  */
+#ifdef RETRO
+int hmain(int argc, char *argv[])
+#else
 int main(int argc, char *argv[])
+#endif
 {
 	/* Generate random seed */
 	srand(time(NULL));
@@ -787,13 +854,17 @@ int main(int argc, char *argv[])
 	/* Check for any passed parameters */
 	if (!Opt_ParseParameters(argc, (const char * const *)argv))
 	{
+#ifndef RETRO
 		return 1;
+#endif
 	}
 	/* monitor type option might require "reset" -> true */
 	Configuration_Apply(true);
 
 #ifdef WIN32
+#ifndef RETRO
 	Win_OpenCon();
+#endif
 #endif
 
 #if HAVE_SETENV
@@ -822,6 +893,11 @@ int main(int argc, char *argv[])
 			1 << CLOCKS_TIMINGS_SHIFT_VBL ,
 			ConfigureParams.Video.AviRecordVcodec );
 
+#ifdef RETRO
+    	//load retro game
+    	Floppy_SetDiskFileName(0, (char*)RPATH, NULL);
+    	Floppy_InsertDiskIntoDrive(0);
+#endif
 	/* Run emulation */
 	Main_UnPauseEmulation();
 	M68000_Start();                 /* Start emulation */
@@ -835,6 +911,8 @@ int main(int argc, char *argv[])
 	}
 	/* Un-init emulation system */
 	Main_UnInit();
-
+#ifdef RETRO
+	pauseg=-1;
+#endif
 	return 0;
 }

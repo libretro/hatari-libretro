@@ -23,7 +23,21 @@ const char RS232_fileid[] = "Hatari rs232.c : " __DATE__ " " __TIME__;
 #endif
 
 #include <SDL.h>
+
+#ifdef RETRO
+#ifdef PS3PORT
+#include "../libretro/altsrc/rsthreadps3.c"
+#elif defined WIIPORT
+#include "../libretro/altsrc/rsthreadwii.c"
+#elif defined WIN32PORT
+#include "../libretro/altsrc/rsthreadwin.c"
+#else
+#include "../libretro/altsrc/rsthread.c"
+#endif
+#else
 #include <SDL_thread.h>
+#endif
+
 #include <errno.h>
 
 #include "main.h"
