@@ -30,6 +30,7 @@ static int DesktopWidth, DesktopHeight;
  */
 void Resolution_Init(void)
 {
+#ifndef RETRO
 	/* Needs to be called after SDL video and configuration
 	 * initialization, but before Hatari Screen init is called
 	 * for the first time!
@@ -51,6 +52,12 @@ void Resolution_Init(void)
 		ConfigureParams.Screen.nMaxWidth = DesktopWidth;
 		ConfigureParams.Screen.nMaxHeight = DesktopHeight;
 	}
+#else
+DesktopWidth = retrow;
+DesktopHeight =retroh;
+ConfigureParams.Screen.nMaxWidth = DesktopWidth;
+ConfigureParams.Screen.nMaxHeight = DesktopHeight;
+#endif
 	DEBUGPRINT(("Desktop resolution: %dx%d\n",DesktopWidth, DesktopHeight));
 	fprintf(stderr, "Configured max Hatari resolution = %dx%d.\n", ConfigureParams.Screen.nMaxWidth, ConfigureParams.Screen.nMaxHeight);
 }
@@ -130,6 +137,7 @@ static bool Resolution_Select(SDL_Rect **modes, int *width, int *height)
  */
 bool Resolution_Search(int *width, int *height, int *bpp, bool keep)
 {
+#ifndef RETRO
 	SDL_Rect **modes;
 	SDL_PixelFormat pixelformat;
 	Uint32 modeflags;
@@ -189,7 +197,13 @@ bool Resolution_Search(int *width, int *height, int *bpp, bool keep)
 		/* Any mode available */
 		DEBUGPRINT(("resolution: All resolutions available.\n"));
 	}
+#else
 
+	*width = retrow;
+	*height = retroh;
+	*bpp = 2;
+
+#endif
 	DEBUGPRINT(("resolution: video mode selected: %dx%dx%d\n",
 		 *width, *height, *bpp));
 	return false;
