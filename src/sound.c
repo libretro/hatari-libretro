@@ -1439,7 +1439,7 @@ void Sound_Update(bool FillFrame)
 
 
 
-#ifdef RETRO
+#ifdef __LIBRETRO__
 extern short signed int SNDBUF[1024*2];
 static void Retro_Audio_CallBack(int len)
 {
@@ -1530,7 +1530,7 @@ void Sound_Update_VBL(void)
 {
 	Sound_Update(true);					/* generate as many samples as needed to fill this VBL */
 //fprintf ( stderr , "vbl done %d %d\n" , SamplesPerFrame , CurrentSamplesNb );
-#ifdef RETRO
+#ifdef __LIBRETRO__
 memset(SNDBUF,0,1024*4);
 Retro_Audio_CallBack(CurrentSamplesNb*4);
 #endif

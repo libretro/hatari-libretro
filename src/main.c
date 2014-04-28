@@ -59,7 +59,7 @@ const char Main_fileid[] = "Hatari main.c : " __DATE__ " " __TIME__;
 #include "falcon/hostscreen.h"
 #include "falcon/dsp.h"
 
-#ifdef RETRO
+#ifdef __LIBRETRO__
 #include "retromain.inc"
 #endif
 
@@ -82,7 +82,7 @@ static bool bEmulationActive = true;      /* Run emulation when started */
 static bool bAccurateDelays;              /* Host system has an accurate SDL_Delay()? */
 static bool bIgnoreNextMouseMotion = false;  /* Next mouse motion will be ignored (needed after SDL_WarpMouse) */
 
-#ifndef RETRO
+#ifndef __LIBRETRO__
 /*-----------------------------------------------------------------------*/
 /**
  * Return current time as millisecond for performance measurements.
@@ -263,7 +263,7 @@ void Main_RequestQuit(void)
 	{
 		/* Assure that CPU core shuts down */
 		M68000_SetSpecial(SPCFLAG_BRK);
-#ifdef RETRO
+#ifdef __LIBRETRO__
 		pauseg=-1;
 #endif
 	}
@@ -299,7 +299,7 @@ void Main_WaitOnVbl(void)
 	Sint64 FrameDuration_micro;
 	Sint64 nDelay;
 
-#ifdef RETRO
+#ifdef __LIBRETRO__
 	if(pauseg==1)pause_select();
 	co_switch(mainThread);
 #endif
@@ -417,7 +417,7 @@ static void Main_CheckForAccurateDelays(void)
  */
 void Main_WarpMouse(int x, int y)
 {
-#ifdef RETRO
+#ifdef __LIBRETRO__
         fmousex=x;
 	fmousey=y;
 #else
@@ -431,7 +431,7 @@ void Main_WarpMouse(int x, int y)
 /**
  * Handle mouse motion event.
  */
-#ifdef RETRO
+#ifdef __LIBRETRO__
 void Main_HandleMouseMotion()
 #else
 static void Main_HandleMouseMotion(SDL_Event *pEvent)
@@ -447,7 +447,7 @@ static void Main_HandleMouseMotion(SDL_Event *pEvent)
 		bIgnoreNextMouseMotion = false;
 		return;
 	}
-#ifdef RETRO
+#ifdef __LIBRETRO__
 	dx = fmousex;
 	dy = fmousey;
 #else
@@ -486,7 +486,7 @@ static void Main_HandleMouseMotion(SDL_Event *pEvent)
 void Main_EventHandler(void)
 {
 
-#ifdef RETRO
+#ifdef __LIBRETRO__
 	if (ConfigureParams.Sound.bEnableSound)SND=1;
 	else SND=-1;
 #else
@@ -632,7 +632,7 @@ static void Main_Init(void)
 	if (!Log_Init())
 	{
 		fprintf(stderr, "Logging/tracing initialization failed\n");
-#ifndef RETRO
+#ifndef __LIBRETRO__
 		exit(-1);
 #else
 		pauseg=-1;
@@ -653,7 +653,7 @@ static void Main_Init(void)
 	if ( IPF_Init() != true )
 	{
 		fprintf(stderr, "Could not initialize the IPF support\n" );
-#ifndef RETRO
+#ifndef __LIBRETRO__
 		exit(-1);
 #else
 		pauseg=-1;
@@ -696,7 +696,7 @@ static void Main_Init(void)
 	{
 		/* If loading of the TOS failed, we bring up the GUI to let the
 		 * user choose another TOS ROM file. */
-#ifdef RETRO
+#ifdef __LIBRETRO__
 		pauseg=1;
 		pause_select();
 #else
@@ -708,7 +708,7 @@ static void Main_Init(void)
 	{
 		fprintf(stderr, "Failed to load TOS image!\n");
 		SDL_Quit();
-#ifdef RETRO
+#ifdef __LIBRETRO__
 		retro_shutdown_hatari();
 #endif 
 		exit(-2);
@@ -728,7 +728,7 @@ static void Main_Init(void)
 /**
  * Un-Initialise emulation
  */
-#ifndef RETRO
+#ifndef __LIBRETRO__
 static void Main_UnInit(void)
 #else
 void Main_UnInit(void)
@@ -798,7 +798,7 @@ static void Main_LoadInitialConfig(void)
  */
 static void Main_StatusbarSetup(void)
 {
-//#ifndef RETRO
+//#ifndef __LIBRETRO__
 	const char *name = NULL;
 	SDLKey key;
 
@@ -830,7 +830,7 @@ static void Main_StatusbarSetup(void)
  * 
  * Note: 'argv' cannot be declared const, MinGW would then fail to link.
  */
-#ifdef RETRO
+#ifdef __LIBRETRO__
 int hmain(int argc, char *argv[])
 #else
 int main(int argc, char *argv[])
@@ -854,7 +854,7 @@ int main(int argc, char *argv[])
 	/* Check for any passed parameters */
 	if (!Opt_ParseParameters(argc, (const char * const *)argv))
 	{
-#ifndef RETRO
+#ifndef __LIBRETRO__
 		return 1;
 #endif
 	}
@@ -862,7 +862,7 @@ int main(int argc, char *argv[])
 	Configuration_Apply(true);
 
 #ifdef WIN32
-#ifndef RETRO
+#ifndef __LIBRETRO__
 	Win_OpenCon();
 #endif
 #endif
@@ -893,7 +893,7 @@ int main(int argc, char *argv[])
 			1 << CLOCKS_TIMINGS_SHIFT_VBL ,
 			ConfigureParams.Video.AviRecordVcodec );
 
-#ifdef RETRO
+#ifdef __LIBRETRO__
     	//load retro game
     	Floppy_SetDiskFileName(0, (char*)RPATH, NULL);
     	Floppy_InsertDiskIntoDrive(0);
@@ -911,7 +911,7 @@ int main(int argc, char *argv[])
 	}
 	/* Un-init emulation system */
 	Main_UnInit();
-#ifdef RETRO
+#ifdef __LIBRETRO__
 	pauseg=-1;
 #endif
 	return 0;

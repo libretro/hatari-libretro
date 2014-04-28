@@ -49,7 +49,7 @@
 /* Define to 1 if you have unix domain sockets */
 //#define HAVE_UNIX_DOMAIN_SOCKETS 1
 
-#ifdef RETRO
+#ifdef __LIBRETRO__
 #if defined(AND) || defined(PS3PORT)
 #undef HAVE_POSIX_MEMALIGN
 #else
@@ -78,7 +78,7 @@
 /* Define to 1 if you have the 'scandir' function. */
 #define HAVE_SCANDIR 1
 
-#ifdef RETRO
+#ifdef __LIBRETRO__
 #if defined(AND) || defined(PS3PORT)
 #undef HAVE_STATVFS
 #else
