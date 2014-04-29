@@ -42,7 +42,7 @@ char RPATH[512];
 
 //EMU FLAGS
 int NPAGE=-1, KCOL=1, BKGCOLOR=0, MAXPAS=6;
-int SHIFTON=-1,MOUSEMODE=-1,NUMJOY=0,SHOWKEY=-1,PAS=4,STATUTON=1;//-1;
+int SHIFTON=-1,MOUSEMODE=-1,NUMJOY=0,SHOWKEY=-1,PAS=4,STATUTON=-1;
 int SND; //SOUND ON/OFF
 static int firstps=0;
 int pauseg=0; //enter_gui
@@ -252,17 +252,14 @@ void Print_Statut(){
 
 	if(LEDA){
 		DrawFBoxBmp(bmp,CROP_WIDTH-6*BOXDEC-6-16,CROP_HEIGHT-0,16,16,RGB565(0,7,0));//led A drive
-		//textpixel  (bmp,CROP_WIDTH-6*BOXDEC-6-16,CROP_HEIGHT-0,0,1,1,4," A");
 		Draw_text(bmp,CROP_WIDTH-6*BOXDEC-6-16,CROP_HEIGHT-0,0xffff,0x0,1,2,40," A");
 	}	
 	if(LEDB){
 		DrawFBoxBmp(bmp,CROP_WIDTH-7*BOXDEC-6-16,CROP_HEIGHT-0,16,16,RGB565(0,7,0));//led B drive
-		//textpixel  (bmp,CROP_WIDTH-7*BOXDEC-6-16,CROP_HEIGHT-0,0,1,1,4," B");
 		Draw_text(bmp,CROP_WIDTH-7*BOXDEC-6-16,CROP_HEIGHT-0,0xffff,0x0,1,2,40," B");
 	}
 	if(LEDC){
 		DrawFBoxBmp(bmp,CROP_WIDTH-8*BOXDEC-6-16,CROP_HEIGHT-0,16,16,RGB565(0,7,0));//led C drive
-		//textpixel  (bmp,CROP_WIDTH-8*BOXDEC-6-16,CROP_HEIGHT-0,0,1,1,4," C");
 		Draw_text(bmp,CROP_WIDTH-8*BOXDEC-6-16,CROP_HEIGHT-0,0xffff,0x0,1,2,40," C");
 		LEDC=0;
 	}
