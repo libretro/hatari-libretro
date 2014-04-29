@@ -240,8 +240,7 @@ HINCLUDES := -I./$(EMU)  -I./$(CPU)  -I./$(FALCON)  \
 
 
 OBJECTS := $(LIBRETRO)/libretro-hatari.o $(LIBRETRO)/hatari-mapper.o $(LIBRETRO)/vkbd.o \
-	$(LIBRETRO)/graph.o $(LIBRETRO)/fontmsx.o \
-	$(BUILD_APP)
+	$(LIBRETRO)/graph.o $(BUILD_APP)
 
 #END COMMON PART 
 

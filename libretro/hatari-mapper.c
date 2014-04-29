@@ -7,6 +7,14 @@
 
 #include "joy.h"
 
+//HATARI PROTOTYPES
+extern bool Dialog_DoProperty(void);
+extern void Screen_SetFullUpdate(void);
+extern void Main_HandleMouseMotion(void);
+extern void Main_UnInit(void);
+extern int  hmain(int argc, char *argv[]);
+
+//TIME
 #ifdef PS3PORT
 #include "sys/sys_time.h"
 #include "sys/timer.h"
@@ -17,48 +25,49 @@
 #include <time.h>
 #endif
 
-int al[2];//left analog1
-int ar[2];//right analog1
-
-unsigned short int bmp[1024*1024];
-extern SDL_Surface *sdlscrn;  
-
-int NPAGE=-1, KCOL=1, BKGCOLOR=0, MAXPAS=6;
-int SHIFTON=-1,MOUSEMODE=-1,NUMJOY=0,SHOWKEY=-1,PAS=4,STATUTON=-1;
-static int firstps=0;
-
-short signed int SNDBUF[1024*2];
-int snd_sampler = 44100 / 50;
-char RPATH[512];
-
-extern int gmx,gmy; //gui mouse
-
-unsigned char MXjoy0; // joy
-int touch=-1; // gui mouse btn
-int fmousex,fmousey; // emu mouse
-int pauseg=0; //enter_gui
-int SND; //SOUND ON/OFF
-int NUMjoy=1;
-
-char Key_Sate[512];
-char Key_Sate2[512];
-	
-unsigned char savbkg[1024*1024* 2];
-
-static int mbt[16]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-
 long frame=0;
 unsigned long  Ktime=0 , LastFPSTime=0;
 
+//VIDEO
+extern SDL_Surface *sdlscrn; 
+unsigned short int bmp[1024*1024];
+unsigned char savbkg[1024*1024* 2];
+
+//SOUND
+short signed int SNDBUF[1024*2];
+int snd_sampler = 44100 / 50;
+
+//PATH
+char RPATH[512];
+
+//EMU FLAGS
+int NPAGE=-1, KCOL=1, BKGCOLOR=0, MAXPAS=6;
+int SHIFTON=-1,MOUSEMODE=-1,NUMJOY=0,SHOWKEY=-1,PAS=4,STATUTON=-1;
+int SND; //SOUND ON/OFF
+static int firstps=0;
+int pauseg=0; //enter_gui
+
+//JOY
+int al[2];//left analog1
+int ar[2];//right analog1
+unsigned char MXjoy0; // joy
+int NUMjoy=1;
+
+//MOUSE
+int touch=-1; // gui mouse btn
+int fmousex,fmousey; // emu mouse
+extern int gmx,gmy; //gui mouse
+
+//KEYBOARD
+char Key_Sate[512];
+char Key_Sate2[512];
+
+static int mbt[16]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+
+//STATS GUI
 extern int LEDA,LEDB,LEDC;
 int BOXDEC= 32+2;
 int STAT_BASEY;
-
-extern bool Dialog_DoProperty(void);
-extern void Screen_SetFullUpdate(void);
-extern void Main_HandleMouseMotion(void);
-extern int hmain(int argc, char *argv[]);
-extern void Main_UnInit(void);
 
 static retro_input_state_t input_state_cb;
 static retro_input_poll_t input_poll_cb;
@@ -113,7 +122,6 @@ void gui_poll_events(){
 		frame++; 
  	    	LastFPSTime = Ktime;		
 		co_switch(mainThread);
-		//retro_run();
  	}
 }
 
@@ -131,13 +139,9 @@ void save_bkg(){
 	}
 }
 
-//SDL_FillRect(sdlscrn, &STScreenRect, SDL_MapRGB(sdlscrn->format, 0, 0, 0));
 void retro_fillrect(SDL_Surface * surf,SDL_Rect *rect,unsigned int col){
-/*
-	#define DrawBoxF( x,  y,  z,  dx,  dy, rgba) \
-	DrawFBoxBmp(bmp, x, y, dx, dy,RGB565(((rgba>>24)&0xff)>>3,((rgba>>16)&0xff)>>3,((rgba>>8)&0xff)>>3 ))
-*/
-	DrawFBoxBmp(bmp,rect->x,rect->y,rect->w ,rect->h,col); //(col>>11)&31,(col>>6)&63,(col>>0)&31 );
+
+	DrawFBoxBmp(bmp,rect->x,rect->y,rect->w ,rect->h,col); 
 }
 
 int  GuiGetMouseState( int * x,int * y){
@@ -149,10 +153,8 @@ int  GuiGetMouseState( int * x,int * y){
 
 void texture_uninit(){
 
-	//printf("free sdlscrn format \n");
 	if(sdlscrn->format != NULL)	
 		free(sdlscrn->format);	
-	//printf("free sdlscrn\n");
 	if(sdlscrn)	
 		free(sdlscrn);	
 }
@@ -161,61 +163,55 @@ SDL_Surface *prepare_texture(int w,int h,int b){
 
 	SDL_Surface *bitmp;
 
-    if(sdlscrn!= NULL)texture_uninit();
+    	if(sdlscrn!= NULL)texture_uninit();
 
-    bitmp = (SDL_Surface *) calloc(1, sizeof(*bitmp));
-    if (bitmp == NULL) {
-        printf("tex surface failed");
-        return NULL;
-    }
+    	bitmp = (SDL_Surface *) calloc(1, sizeof(*bitmp));
+    	if (bitmp == NULL) {
+        	printf("tex surface failed");
+        	return NULL;
+    	}
 
+	bitmp->format = calloc(1,sizeof(*bitmp->format));
+	if (bitmp->format == NULL) {
+	        printf("tex format failed");
+	        return NULL;
+	}
+ 
+	bitmp->format->BitsPerPixel = 16;
+	bitmp->format->BytesPerPixel = 2;
+	bitmp->format->Rloss=5;
+	bitmp->format->Gloss=6;
+	bitmp->format->Bloss=5;
+	bitmp->format->Aloss=0;
+	bitmp->format->Rshift=11;
+	bitmp->format->Gshift=6;
+	bitmp->format->Bshift=0;
+	bitmp->format->Ashift=16;
+	bitmp->format->Rmask=0x0000F800;
+	bitmp->format->Gmask=0x000007E0;
+	bitmp->format->Bmask=0x0000001F;
+	bitmp->format->Amask=0x00000000;
+	bitmp->format->colorkey=0;
+	bitmp->format->alpha=0;
 
-    bitmp->format = calloc(1,sizeof(*bitmp->format));
-    if (bitmp->format == NULL) {
-        printf("tex format failed");
-        return NULL;
-    }
+	bitmp->flags=0;
+	bitmp->w=w;
+	bitmp->h=h;
+	bitmp->pitch=retrow*2;
+	bitmp->pixels=(unsigned char *)&bmp[0];
+	bitmp->clip_rect.x=0;
+	bitmp->clip_rect.y=0;
+	bitmp->clip_rect.w=w;
+	bitmp->clip_rect.h=h;
 
-
-bitmp->flags=0; 
-bitmp->format->BitsPerPixel = 16;
-bitmp->format->BytesPerPixel = 2;
-bitmp->format->Rloss=5;
-bitmp->format->Gloss=6;
-bitmp->format->Bloss=5;
-bitmp->format->Aloss=0;
-bitmp->format->Rshift=11;
-bitmp->format->Gshift=6;
-bitmp->format->Bshift=0;
-bitmp->format->Ashift=16;
-bitmp->format->Rmask=0x0000F800;
-bitmp->format->Gmask=0x000007E0;
-bitmp->format->Bmask=0x0000001F;
-bitmp->format->Amask=0x00000000;
-bitmp->format->colorkey=0;
-bitmp->format->alpha=0;
-
-bitmp->w=w;
-bitmp->h=h;
-bitmp->pitch=retrow*2;
-bitmp->pixels=(unsigned char *)&bmp[0];
-bitmp->clip_rect.x=0;
-bitmp->clip_rect.y=0;
-bitmp->clip_rect.w=w;
-bitmp->clip_rect.h=h;
-printf("fin prepare tex:%dx%dx%d\n",bitmp->w,bitmp->h,bitmp->format->BytesPerPixel);
-return bitmp;
+	//printf("fin prepare tex:%dx%dx%d\n",bitmp->w,bitmp->h,bitmp->format->BytesPerPixel);
+	return bitmp;
 }      
 
 void texture_init(){
 
 	memset(bmp, 0, sizeof(bmp));
-/*
-	sdlscrn.w=retrow;
-	sdlscrn.h=retroh;
-	sdlscrn.bitmap=(unsigned char *)&bmp[0];
-	sdlscrn.stride=retrow*2;
-*/
+
 	gmx=(retrow/2 )-1;
 	gmy=(retroh/2)-1;
 }
@@ -255,15 +251,18 @@ void Print_Statut(){
 
 	if(LEDA){
 		DrawFBoxBmp(bmp,CROP_WIDTH-6*BOXDEC-6-16,CROP_HEIGHT-0,16,16,RGB565(0,7,0));//led A drive
-		textpixel  (bmp,CROP_WIDTH-6*BOXDEC-6-16,CROP_HEIGHT-0,0,1,1,4," A");
+		//textpixel  (bmp,CROP_WIDTH-6*BOXDEC-6-16,CROP_HEIGHT-0,0,1,1,4," A");
+		Draw_text(bmp,CROP_WIDTH-6*BOXDEC-6-16,CROP_HEIGHT-0,0xffff,0x0,1,2,40," A");
 	}	
 	if(LEDB){
 		DrawFBoxBmp(bmp,CROP_WIDTH-7*BOXDEC-6-16,CROP_HEIGHT-0,16,16,RGB565(0,7,0));//led B drive
-		textpixel  (bmp,CROP_WIDTH-7*BOXDEC-6-16,CROP_HEIGHT-0,0,1,1,4," B");
+		//textpixel  (bmp,CROP_WIDTH-7*BOXDEC-6-16,CROP_HEIGHT-0,0,1,1,4," B");
+		Draw_text(bmp,CROP_WIDTH-7*BOXDEC-6-16,CROP_HEIGHT-0,0xffff,0x0,1,2,40," B");
 	}
 	if(LEDC){
 		DrawFBoxBmp(bmp,CROP_WIDTH-8*BOXDEC-6-16,CROP_HEIGHT-0,16,16,RGB565(0,7,0));//led C drive
-		textpixel  (bmp,CROP_WIDTH-8*BOXDEC-6-16,CROP_HEIGHT-0,0,1,1,4," C");
+		//textpixel  (bmp,CROP_WIDTH-8*BOXDEC-6-16,CROP_HEIGHT-0,0,1,1,4," C");
+		Draw_text(bmp,CROP_WIDTH-8*BOXDEC-6-16,CROP_HEIGHT-0,0xffff,0x0,1,2,40," C");
 		LEDC=0;
 	}
 
@@ -337,8 +336,8 @@ Y   Emu Gui
 void update_input(void)
 {
 	int i;
-	//   RETRO           B    Y    SLT  STA  UP   DWN  LEFT RGT  A    X    L    R    L2   R2   L3   R3
-        //   INDEX       0     1    2    3    4    5    6    7    8    9    10   11   12   13   14   15
+	//   RETRO        B    Y    SLT  STA  UP   DWN  LEFT RGT  A    X    L    R    L2   R2   L3   R3
+        //   INDEX        0    1    2    3    4    5    6    7    8    9    10   11   12   13   14   15
 	static int vbt[16]={0x1C,0x39,0x01,0x3B,0x01,0x02,0x04,0x08,0x80,0x6D,0x15,0x31,0x24,0x1F,0x6E,0x6F};
 	static int oldi=-1;
 	static int vkx=0,vky=0;
@@ -352,7 +351,6 @@ void update_input(void)
 	
     	if (Key_Sate[RETROK_F11] || input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_Y) ){
 		pauseg=1;
-		//pause_select();
 	}
 
 	i=10;//show vkey toggle
