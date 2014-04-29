@@ -32,7 +32,7 @@ Uint8 type;
 
 //SOME SDL_FUNC WRAPPER
 //GLOBALS
-#define SDL_ShowCursor(a) 
+#define SDL_ShowCursor(a) 0
 #define SDL_GRAB_OFF 0
 #define SDL_GRAB_ON 1
 #define SDL_WM_GrabInput(a)
@@ -54,7 +54,7 @@ Uint8 type;
 #define SDL_MUSTLOCK(a) 0
 #define SDL_LockSurface(a) 0
 #define SDL_UnlockSurface(a) 0
-#define SDL_FillRect(...)
+#define SDL_FillRect(s,r,c) retro_fillrect((s),(r),(c))
 #define SDL_UpdateRects(a, b,c)
 #define SDL_UpdateRect(...)
 #define SDL_SetVideoMode(w, h, b, f) prepare_texture((w),(h),(b))
@@ -77,6 +77,8 @@ Uint8 type;
 #define SDL_JoystickGetButton(...) 0
 #define SDL_JoystickNumAxes(...) 0
 #define SDL_JoystickNumButtons(a) 16
+//MOUSE
+#define SDL_GetMouseState(X,Y) GuiGetMouseState((X),(Y))
 
 //PS3 HACK
 #ifdef PS3PORT

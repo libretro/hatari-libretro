@@ -131,9 +131,37 @@ void save_bkg(){
 	}
 }
 
+//SDL_FillRect(sdlscrn, &STScreenRect, SDL_MapRGB(sdlscrn->format, 0, 0, 0));
+void retro_fillrect(SDL_Surface * surf,SDL_Rect *rect,unsigned int col){
+/*
+	#define DrawBoxF( x,  y,  z,  dx,  dy, rgba) \
+	DrawFBoxBmp(bmp, x, y, dx, dy,RGB565(((rgba>>24)&0xff)>>3,((rgba>>16)&0xff)>>3,((rgba>>8)&0xff)>>3 ))
+*/
+	DrawFBoxBmp(bmp,rect->x,rect->y,rect->w ,rect->h,col); //(col>>11)&31,(col>>6)&63,(col>>0)&31 );
+}
+
+int  GuiGetMouseState( int * x,int * y){
+
+	*x=gmx;
+	*y=gmy;
+	return 0;
+}
+
+void texture_uninit(){
+
+	//printf("free sdlscrn format \n");
+	if(sdlscrn->format != NULL)	
+		free(sdlscrn->format);	
+	//printf("free sdlscrn\n");
+	if(sdlscrn)	
+		free(sdlscrn);	
+}
+
 SDL_Surface *prepare_texture(int w,int h,int b){
 
 	SDL_Surface *bitmp;
+
+    if(sdlscrn!= NULL)texture_uninit();
 
     bitmp = (SDL_Surface *) calloc(1, sizeof(*bitmp));
     if (bitmp == NULL) {
@@ -142,27 +170,28 @@ SDL_Surface *prepare_texture(int w,int h,int b){
     }
 
 
-    bitmp->format = malloc(sizeof(*bitmp->format));
+    bitmp->format = calloc(1,sizeof(*bitmp->format));
     if (bitmp->format == NULL) {
         printf("tex format failed");
         return NULL;
     }
 
+
 bitmp->flags=0; 
 bitmp->format->BitsPerPixel = 16;
 bitmp->format->BytesPerPixel = 2;
-bitmp->format->Rloss=0;
-bitmp->format->Gloss=0;
-bitmp->format->Bloss=0;
+bitmp->format->Rloss=5;
+bitmp->format->Gloss=6;
+bitmp->format->Bloss=5;
 bitmp->format->Aloss=0;
-bitmp->format->Rshift=0;
-bitmp->format->Gshift=0;
+bitmp->format->Rshift=11;
+bitmp->format->Gshift=6;
 bitmp->format->Bshift=0;
-bitmp->format->Ashift=0;
-bitmp->format->Rmask=0;
-bitmp->format->Gmask=0;
-bitmp->format->Bmask=0;
-bitmp->format->Amask=0;
+bitmp->format->Ashift=16;
+bitmp->format->Rmask=0x0000F800;
+bitmp->format->Gmask=0x000007E0;
+bitmp->format->Bmask=0x0000001F;
+bitmp->format->Amask=0x00000000;
 bitmp->format->colorkey=0;
 bitmp->format->alpha=0;
 

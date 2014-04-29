@@ -76,7 +76,7 @@ else
 endif
 
 CFLAGS += \
-	-std=gnu99  -O3 -finline-functions -funroll-loops  -fsigned-char  \
+	-std=gnu99 -finline-functions -funroll-loops  -fsigned-char  \
 	-Wno-strict-prototypes -ffast-math -fomit-frame-pointer -fno-strength-reduce  -fno-builtin -finline-functions -s
 
 CXXFLAGS  +=	$(CFLAGS) -std=gnu++0x

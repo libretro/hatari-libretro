@@ -1,8 +1,8 @@
 /*
   Hatari - dlgHardDisk.c
 
-  This file is distributed under the GNU Public License, version 2 or at
-  your option any later version. Read the file gpl.txt for details.
+  This file is distributed under the GNU General Public License, version 2
+  or at your option any later version. Read the file gpl.txt for details.
 */
 const char DlgHardDisk_fileid[] = "Hatari dlgHardDisk.c : " __DATE__ " " __TIME__;
 
@@ -13,6 +13,7 @@ const char DlgHardDisk_fileid[] = "Hatari dlgHardDisk.c : " __DATE__ " " __TIME_
 #include "sdlgui.h"
 #include "file.h"
 
+#include "gui-retro.h"
 
 #define DISKDLG_ACSIEJECT          3
 #define DISKDLG_ACSIBROWSE         4
@@ -46,7 +47,7 @@ static SGOBJ diskdlg[] =
 
 	{ SGTEXT, 0, 0, 2,5, 20,1, "IDE HD master image:" },
 	{ SGBUTTON, SG_EXIT/*0*/, 0, 46,5, 7,1, "Eject" },
-	{ SGBUTTON,SG_EXIT/*0*/, 0, 54,5, 8,1, "Browse" },
+	{ SGBUTTON, SG_EXIT/*0*/, 0, 54,5, 8,1, "Browse" },
 	{ SGTEXT, 0, 0, 3,6, 58,1, NULL },
 
 	{ SGTEXT, 0, 0, 2,7, 19,1, "IDE HD slave image:" },
@@ -115,21 +116,13 @@ void DlgHardDisk_Main(void)
 	else
 		diskdlg[DISKDLG_BOOTHD].state &= ~SG_SELECTED;
 
-/* ACSI hard disk image: */
+	/* ACSI hard disk image: */
 	if (ConfigureParams.Acsi[0].bUseDevice)
 		File_ShrinkName(dlgname_acsi, ConfigureParams.Acsi[0].sDeviceFile,
 		                diskdlg[DISKDLG_ACSINAME].w);
 	else
 		dlgname_acsi[0] = '\0';
 	diskdlg[DISKDLG_ACSINAME].txt = dlgname_acsi;
-/*
-	if (ConfigureParams.HardDisk.bUseHardDiskImage)
-		File_ShrinkName(dlgname_acsi, ConfigureParams.HardDisk.szHardDiskImage,
-		                diskdlg[DISKDLG_ACSINAME].w);
-	else
-		dlgname_acsi[0] = '\0';
-	diskdlg[DISKDLG_ACSINAME].txt = dlgname_acsi;
-*/
 
 	/* IDE master hard disk image: */
 	if (ConfigureParams.HardDisk.bUseIdeMasterHardDiskImage)
@@ -164,12 +157,11 @@ void DlgHardDisk_Main(void)
 
 	/* Draw and process the dialog */
 	do
-	{       
+	{
 		but = SDLGui_DoDialog(diskdlg, NULL);
 		switch (but)
 		{
 		 case DISKDLG_ACSIEJECT:
-//			ConfigureParams.HardDisk.bUseHardDiskImage = false;
 			ConfigureParams.Acsi[0].bUseDevice = false;
 			dlgname_acsi[0] = '\0';
 			break;
@@ -178,11 +170,6 @@ void DlgHardDisk_Main(void)
 			                          ConfigureParams.Acsi[0].sDeviceFile,
 			                          diskdlg[DISKDLG_ACSINAME].w, false))
 				ConfigureParams.Acsi[0].bUseDevice = true;
-/*
-			if (SDLGui_FileConfSelect(dlgname_acsi,
-			                          ConfigureParams.HardDisk.szHardDiskImage,
-			                          diskdlg[DISKDLG_ACSINAME].w, false))
-				ConfigureParams.HardDisk.bUseHardDiskImage = true;*/
 			break;
 		 case DISKDLG_IDEMASTEREJECT:
 			ConfigureParams.HardDisk.bUseIdeMasterHardDiskImage = false;

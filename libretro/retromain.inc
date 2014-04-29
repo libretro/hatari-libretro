@@ -7,7 +7,7 @@ extern int pauseg;
 #undef HAVE_GETTIMEOFDAY
 #undef HAVE_NANOSLEEP
 #endif
-
+extern int gmx,gmy;
 extern int fmousex,fmousey;
 extern int SND;
 

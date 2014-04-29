@@ -1,8 +1,8 @@
 /*
   Hatari - dlgRom.c
 
-  This file is distributed under the GNU Public License, version 2 or at
-  your option any later version. Read the file gpl.txt for details.
+  This file is distributed under the GNU General Public License, version 2
+  or at your option any later version. Read the file gpl.txt for details.
 */
 const char DlgRom_fileid[] = "Hatari dlgRom.c : " __DATE__ " " __TIME__;
 
@@ -12,6 +12,7 @@ const char DlgRom_fileid[] = "Hatari dlgRom.c : " __DATE__ " " __TIME__;
 #include "sdlgui.h"
 #include "file.h"
 
+#include "gui-retro.h"
 
 #define DLGROM_TOSBROWSE  4
 #define DLGROM_TOSNAME    5
@@ -61,7 +62,7 @@ void DlgRom_Main(void)
 	romdlg[DLGROM_CARTNAME].txt = szDlgCartName;
 
 	do
-	{       
+	{
 		but = SDLGui_DoDialog(romdlg, NULL);
 		switch (but)
 		{

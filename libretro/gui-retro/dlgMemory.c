@@ -1,8 +1,8 @@
 /*
   Hatari - dlgMemory.c
 
-  This file is distributed under the GNU Public License, version 2 or at
-  your option any later version. Read the file gpl.txt for details.
+  This file is distributed under the GNU General Public License, version 2
+  or at your option any later version. Read the file gpl.txt for details.
 */
 const char DlgMemory_fileid[] = "Hatari dlgMemory.c : " __DATE__ " " __TIME__;
 
@@ -13,6 +13,7 @@ const char DlgMemory_fileid[] = "Hatari dlgMemory.c : " __DATE__ " " __TIME__;
 #include "file.h"
 #include "screen.h"
 
+#include "gui-retro.h"
 
 #define DLGMEM_512KB    4
 #define DLGMEM_1MB      5
@@ -106,7 +107,7 @@ bool Dialog_MemDlg(void)
 		memorydlg[DLGMEM_AUTOSAVE].state &= ~SG_SELECTED;
 
 	do
-	{       
+	{
 		but = SDLGui_DoDialog(memorydlg, NULL);
 
 		switch (but)

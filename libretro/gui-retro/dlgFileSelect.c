@@ -13,21 +13,13 @@ const char DlgFileSelect_fileid[] = "Hatari dlgFileSelect.c : " __DATE__ " " __T
 #include <unistd.h>
 
 #include "main.h"
-//#include "scandir.h"
+#include "scandir.h"
 #include "sdlgui.h"
 #include "file.h"
 #include "paths.h"
 #include "zip.h"
 
-//RETRO
-int alphasort2(const struct dirent **d1, const struct dirent **d2)
-{
-	    const struct dirent *c1;
-	    const struct dirent *c2;
-	    c1 = *d1;
-	    c2 = *d2;
-	    return strcmp(c1->d_name, c2->d_name);
-}
+#include "gui-retro.h"
 
 #define SGFS_NUMENTRIES   16            /* How many entries are displayed at once */
 
@@ -92,11 +84,11 @@ static SGOBJ fsdlg[] =
 	{ SGTEXT, SG_EXIT, 0, 2,20, DLGFILENAMES_SIZE,1, dlgfilenames[14] },
 	{ SGTEXT, SG_EXIT, 0, 2,21, DLGFILENAMES_SIZE,1, dlgfilenames[15] },
 	{ SGSCROLLBAR, SG_TOUCHEXIT, 0, 62, 7, 0, 0, NULL },       /* Scrollbar */
-	{ SGBUTTON, SG_TOUCHEXIT, 0, 62, 6,1,1, "\xCB"/*"\x01"*/  },          /* Arrow up */
-	{ SGBUTTON, SG_TOUCHEXIT, 0, 62,21,1,1, "\xCA"/*"\x02"*/  },          /* Arrow down */
+	{ SGBUTTON, SG_TOUCHEXIT, 0, 62, 6,1,1, SGARROWUP/*"\x01"*/ },          /* Arrow up */
+	{ SGBUTTON, SG_TOUCHEXIT, 0, 62,21,1,1, SGARROWDOWN/*"\x02"*/ },          /* Arrow down */
 	{ SGCHECKBOX, SG_EXIT, 0, 2,23, 18,1, "Show hidden files" },
-	{ SGBUTTON, SG_EXIT /*SG_DEFAULT*/, 0, 32,23, 8,1, "Okay" },
-	{ SGBUTTON, SG_EXIT/* SG_CANCEL*/, 0, 50,23, 8,1, "Cancel" },
+	{ SGBUTTON, SG_EXIT/*SG_DEFAULT*/, 0, 32,23, 8,1, "Okay" },
+	{ SGBUTTON, SG_EXIT/*SG_CANCEL*/, 0, 50,23, 8,1, "Cancel" },
 	{ -1, 0, 0, 0,0, 0,0, NULL }
 };
 
@@ -241,9 +233,6 @@ static void DlgFileSelect_ScrollDown(void)
 	}
 }
 
-//RETRO
-extern int gmx,gmy;
-
 /*-----------------------------------------------------------------------*/
 /**
  * Manage the scrollbar up or down.
@@ -254,7 +243,7 @@ static void DlgFileSelect_ManageScrollbar(void)
 	int scrollY, scrollYmin, scrollYmax, scrollH_half;
 	float scrollMove;
 	
-	x=gmx;y=gmy;//b = SDL_GetMouseState(&x, &y);
+	b = SDL_GetMouseState(&x, &y);
 
 	/* If mouse is down on the scrollbar for the first time */
 	if (fsdlg[SGFSDLG_SCROLLBAR].state & SG_MOUSEDOWN) {
@@ -329,10 +318,9 @@ static void DlgFileSelect_ManageScrollbar(void)
 /**
  * Handle SDL events.
  */
-static void DlgFileSelect_HandleSdlEvents(int/*SDL_Event*/ *pEvent)
+static void DlgFileSelect_HandleSdlEvents(SDL_Event *pEvent)
 {
 	int oldypos = ypos;
-
 //RETRO TODO FIX
 #if 0
 	switch (pEvent->type)
@@ -466,9 +454,6 @@ static void DlgFileSelect_Convert_ypos_to_scrollbar_Ypos(void)
 		scrollbar_Ypos = (float)ypos / ((float)entries/(float)(SGFS_NUMENTRIES-2));
 }
 
-//RETRO 
-extern int okold;
-
 /*-----------------------------------------------------------------------*/
 /**
  * Show and process a file selection dialog.
@@ -492,7 +477,7 @@ char* SDLGui_FileSelect(const char *path_and_name, char **zip_path, bool bAllowN
 	char *zipdir;
 	bool browsingzip = false;           /* Are we browsing an archive? */
 	zip_dir *zipfiles = NULL;
-	int /*SDL_Event*/ sdlEvent;
+	SDL_Event sdlEvent;
 	int yScrollbar_size;                 /* Size of the vertical scrollbar */
 
 	/* If this is the first call to SDLGui_FileSelect, we reset scrollbar_Ypos and ypos */
@@ -516,11 +501,11 @@ char* SDLGui_FileSelect(const char *path_and_name, char **zip_path, bool bAllowN
 	zipfilename[0] = 0;
 	fname[0] = 0;
 	path[0] = 0;
-#if 0
+
 	/* Save mouse state and enable cursor */
 	bOldMouseVisibility = SDL_ShowCursor(SDL_QUERY);
 	SDL_ShowCursor(SDL_ENABLE);
-#endif
+
 	SDLGui_CenterDlg(fsdlg);
 	if (bAllowNew)
 	{
@@ -554,8 +539,6 @@ char* SDLGui_FileSelect(const char *path_and_name, char **zip_path, bool bAllowN
 	File_ShrinkName(dlgpath, path, DLGPATH_SIZE);
 	File_ShrinkName(dlgfname, fname, DLGFNAME_SIZE);
 
-	okold=0;
-
 	do
 	{
 		if (reloaddir)
@@ -574,7 +557,7 @@ char* SDLGui_FileSelect(const char *path_and_name, char **zip_path, bool bAllowN
 			else
 			{
 				/* Load directory entries: */
-				entries = scandir(path, &files, 0, alphasort2);
+				entries = scandir(path, &files, 0, alphasort);
 			}
 			
 			/* Remove hidden files from the list if necessary: */
@@ -869,7 +852,7 @@ char* SDLGui_FileSelect(const char *path_and_name, char **zip_path, bool bAllowN
 	else
 		retpath = NULL;
 clean_exit:
-//	SDL_ShowCursor(bOldMouseVisibility);
+	SDL_ShowCursor(bOldMouseVisibility);
 	free(pStringMem);
 	return retpath;
 }

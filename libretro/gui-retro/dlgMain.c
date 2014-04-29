@@ -1,8 +1,8 @@
 /*
   Hatari - dlgMain.c
 
-  This file is distributed under the GNU Public License, version 2 or at
-  your option any later version. Read the file gpl.txt for details.
+  This file is distributed under the GNU General Public License, version 2
+  or at your option any later version. Read the file gpl.txt for details.
 
   The main dialog.
 */
@@ -14,6 +14,7 @@ const char DlgMain_fileid[] = "Hatari dlgMain.c : " __DATE__ " " __TIME__;
 #include "sdlgui.h"
 #include "screen.h"
 
+#include "gui-retro.h"
 
 #define MAINDLG_ABOUT    2
 #define MAINDLG_SYSTEM   3
@@ -49,8 +50,8 @@ static SGOBJ maindlg[] =
 	{ SGBUTTON, SG_EXIT/*0*/, 0, 17,6, 16,1, "Hard disks" },
 	{ SGBUTTON, SG_EXIT/*0*/, 0, 17,8, 16,1, "Atari screen" },
 	{ SGBUTTON, SG_EXIT/*0*/, 0, 17,10, 16,1, "Hatari screen" },
-	{ SGBUTTON, 0, 0, 35,4, 13,1, "Joysticks" },
-	{ SGBUTTON, 0, 0, 35,6, 13,1, "Keyboard" },
+	{ SGBUTTON, SG_EXIT/*0*/, 0, 35,4, 13,1, "Joysticks" },
+	{ SGBUTTON, SG_EXIT/*0*/, 0, 35,6, 13,1, "Keyboard" },
 	{ SGBUTTON, SG_EXIT/*0*/, 0, 35,8, 13,1, "Devices" },
 	{ SGBUTTON, SG_EXIT/*0*/, 0, 35,10, 13,1, "Sound" },
 	{ SGBUTTON, SG_EXIT/*0*/, 0, 7,13, 16,1, "Load config." },
@@ -69,7 +70,7 @@ static SGOBJ maindlg[] =
  */
 int Dialog_MainDlg(bool *bReset, bool *bLoadedSnapshot)
 {
-	int retbut=0;
+	int retbut;
 	bool bOldMouseVisibility;
 	int nOldMouseX, nOldMouseY;
 	char *psNewCfg;
@@ -79,18 +80,18 @@ int Dialog_MainDlg(bool *bReset, bool *bLoadedSnapshot)
 
 	if (SDLGui_SetScreen(sdlscrn))
 		return false;
-/*
+
 	SDL_GetMouseState(&nOldMouseX, &nOldMouseY);
 	bOldMouseVisibility = SDL_ShowCursor(SDL_QUERY);
 	SDL_ShowCursor(SDL_ENABLE);
-*/
+
 	SDLGui_CenterDlg(maindlg);
 
 	maindlg[MAINDLG_NORESET].state |= SG_SELECTED;
 	maindlg[MAINDLG_RESET].state &= ~SG_SELECTED;
 
 	do
-	{       
+	{
 		retbut = SDLGui_DoDialog(maindlg, NULL);
 		switch (retbut)
 		{
@@ -120,7 +121,8 @@ int Dialog_MainDlg(bool *bReset, bool *bLoadedSnapshot)
 			{
 				/* Memory snapshot has been loaded - leave GUI immediately */
 				*bLoadedSnapshot = true;
-				//Main_WarpMouse(nOldMouseX, nOldMouseY);
+				SDL_ShowCursor(bOldMouseVisibility);
+				Main_WarpMouse(nOldMouseX, nOldMouseY);
 				return true;
 			}
 			break;
@@ -159,6 +161,7 @@ int Dialog_MainDlg(bool *bReset, bool *bLoadedSnapshot)
 			break;
 		}
                 gui_poll_events();
+
 	}
 	while (retbut != MAINDLG_OK && retbut != MAINDLG_CANCEL && retbut != SDLGUI_QUIT
 	        && retbut != SDLGUI_ERROR && !bQuitProgram);
@@ -167,8 +170,8 @@ int Dialog_MainDlg(bool *bReset, bool *bLoadedSnapshot)
 	if (maindlg[MAINDLG_RESET].state & SG_SELECTED)
 		*bReset = true;
 
-	//SDL_ShowCursor(bOldMouseVisibility);
-	//Main_WarpMouse(nOldMouseX, nOldMouseY);
+	SDL_ShowCursor(bOldMouseVisibility);
+	Main_WarpMouse(nOldMouseX, nOldMouseY);
 
 	return (retbut == MAINDLG_OK);
 }
