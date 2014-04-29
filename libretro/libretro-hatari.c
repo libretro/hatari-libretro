@@ -121,7 +121,7 @@ void Emu_init(){
 }
 
 void Emu_uninit(){
-	
+	texture_uninit();
 }
 
 void retro_init(void)

@@ -1,8 +1,8 @@
 /*
   Hatari - dlgSound.c
 
-  This file is distributed under the GNU Public License, version 2 or at
-  your option any later version. Read the file gpl.txt for details.
+  This file is distributed under the GNU General Public License, version 2
+  or at your option any later version. Read the file gpl.txt for details.
 */
 const char DlgSound_fileid[] = "Hatari dlgSound.c : " __DATE__ " " __TIME__;
 
@@ -13,6 +13,7 @@ const char DlgSound_fileid[] = "Hatari dlgSound.c : " __DATE__ " " __TIME__;
 #include "file.h"
 #include "sound.h"
 
+#include "gui-retro.h"
 
 #define DLGSOUND_ENABLE     3
 #define DLGSOUND_SYNC       4
@@ -142,8 +143,7 @@ void Dialog_SoundDlg(void)
 
 	/* The sound dialog main loop */
 	do
-	{	
-		
+	{
 		but = SDLGui_DoDialog(sounddlg, NULL);
 		switch (but)
 		{

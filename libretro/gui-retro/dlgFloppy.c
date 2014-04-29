@@ -1,8 +1,8 @@
 /*
   Hatari - dlgFloppy.c
 
-  This file is distributed under the GNU Public License, version 2 or at
-  your option any later version. Read the file gpl.txt for details.
+  This file is distributed under the GNU General Public License, version 2
+  or at your option any later version. Read the file gpl.txt for details.
 */
 const char DlgFloppy_fileid[] = "Hatari dlgFloppy.c : " __DATE__ " " __TIME__;
 
@@ -14,10 +14,13 @@ const char DlgFloppy_fileid[] = "Hatari dlgFloppy.c : " __DATE__ " " __TIME__;
 #include "file.h"
 #include "floppy.h"
 
+#include "gui-retro.h"
 
+#define FLOPPYDLG_ENABLE_A    2
 #define FLOPPYDLG_EJECTA      3
 #define FLOPPYDLG_BROWSEA     4
 #define FLOPPYDLG_DISKA       5
+#define FLOPPYDLG_ENABLE_B    6
 #define FLOPPYDLG_EJECTB      7
 #define FLOPPYDLG_BROWSEB     8
 #define FLOPPYDLG_DISKB       9
@@ -37,17 +40,17 @@ static SGOBJ floppydlg[] =
 {
 	{ SGBOX, 0, 0, 0,0, 64,20, NULL },
 	{ SGTEXT, 0, 0, 25,1, 12,1, "Floppy disks" },
-	{ SGTEXT, 0, 0, 2,3, 8,1, "Drive A:" },
-	{ SGBUTTON,  SG_EXIT/*0*/, 0, 46,3, 7,1, "Eject" },
-	{ SGBUTTON,  SG_EXIT/*0*/, 0, 54,3, 8,1, "Browse" },
+	{ SGCHECKBOX, 0, 0, 2,3, 8,1, "Drive A:" },
+	{ SGBUTTON, SG_EXIT/*0*/, 0, 46,3, 7,1, "Eject" },
+	{ SGBUTTON, SG_EXIT/*0*/, 0, 54,3, 8,1, "Browse" },
 	{ SGTEXT, 0, 0, 3,4, 58,1, NULL },
-	{ SGTEXT, 0, 0, 2,6, 8,1, "Drive B:" },
-	{ SGBUTTON,  SG_EXIT/*0*/, 0, 46,6, 7,1, "Eject" },
-	{ SGBUTTON,  SG_EXIT/*0*/, 0, 54,6, 8,1, "Browse" },
+	{ SGCHECKBOX, 0, 0, 2,6, 8,1, "Drive B:" },
+	{ SGBUTTON, SG_EXIT/*0*/, 0, 46,6, 7,1, "Eject" },
+	{ SGBUTTON, SG_EXIT/*0*/, 0, 54,6, 8,1, "Browse" },
 	{ SGTEXT, 0, 0, 3,7, 58,1, NULL },
 	{ SGTEXT, 0, 0, 2,9, 32,1, "Default floppy images directory:" },
 	{ SGTEXT, 0, 0, 3,10, 58,1, NULL },
-	{ SGBUTTON,  SG_EXIT/*0*/, 0, 54,9, 8,1, "Browse" },
+	{ SGBUTTON, SG_EXIT/*0*/, 0, 54,9, 8,1, "Browse" },
 	{ SGCHECKBOX, 0, 0, 2,12, 16,1, "Auto insert B" },
 	{ SGCHECKBOX, 0, 0, 2,14, 21,1, "Fast floppy access" },
 	{ SGBUTTON, SG_EXIT/*0*/, 0, 42,14, 20,1, "Create blank image" },
@@ -143,30 +146,21 @@ static void DlgFloppy_QueryInsert(char *namea, int ida, char *nameb, int idb, co
 	char *dlgname;
 
 	SDLGui_CenterDlg(alertdlg);
-
-int but;
-
-do{        
-	but=SDLGui_DoDialog(alertdlg, NULL);
-
+	switch (SDLGui_DoDialog(alertdlg, NULL))
 	{
-		if(but== DLGMOUNT_A){
+		case DLGMOUNT_A:
 			dlgname = namea;
 			dlgid = ida;
 			diskid = 0;
-                }
-		else if(but == DLGMOUNT_B){
+			break;
+		case DLGMOUNT_B:
 			dlgname = nameb;
 			dlgid = idb;
 			diskid = 1;
-                }
-		
+			break;
+		default:
+			return;
 	}
-        gui_poll_events();
-}
-while (but != DLGMOUNT_CANCEL && but != DLGMOUNT_A  && but != DLGMOUNT_B && but != SDLGUI_QUIT
-	        && but != SDLGUI_ERROR && !bQuitProgram);
-
 
 	realname = Floppy_SetDiskFileName(diskid, path, NULL);
 	if (realname)
@@ -227,9 +221,21 @@ void DlgFloppy_Main(void)
 	else
 		floppydlg[FLOPPYDLG_FASTFLOPPY].state &= ~SG_SELECTED;
 
+	/* Enable/disable drives A: and B: */
+	if (ConfigureParams.DiskImage.EnableDriveA)
+		floppydlg[FLOPPYDLG_ENABLE_A].state |= SG_SELECTED;
+	else
+		floppydlg[FLOPPYDLG_ENABLE_A].state &= ~SG_SELECTED;
+
+	if (ConfigureParams.DiskImage.EnableDriveB)
+		floppydlg[FLOPPYDLG_ENABLE_B].state |= SG_SELECTED;
+	else
+		floppydlg[FLOPPYDLG_ENABLE_B].state &= ~SG_SELECTED;
+
+
 	/* Draw and process the dialog */
 	do
-	{       
+	{
 		but = SDLGui_DoDialog(floppydlg, NULL);
 		switch (but)
 		{
@@ -281,4 +287,6 @@ void DlgFloppy_Main(void)
 
 	ConfigureParams.DiskImage.bAutoInsertDiskB = (floppydlg[FLOPPYDLG_AUTOB].state & SG_SELECTED);
 	ConfigureParams.DiskImage.FastFloppy = (floppydlg[FLOPPYDLG_FASTFLOPPY].state & SG_SELECTED);
+	ConfigureParams.DiskImage.EnableDriveA = (floppydlg[FLOPPYDLG_ENABLE_A].state & SG_SELECTED);
+	ConfigureParams.DiskImage.EnableDriveB = (floppydlg[FLOPPYDLG_ENABLE_B].state & SG_SELECTED);
 }

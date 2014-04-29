@@ -1,8 +1,8 @@
 /*
   Hatari - dlgNewDisk.c
 
-  This file is distributed under the GNU Public License, version 2 or at
-  your option any later version. Read the file gpl.txt for details.
+  This file is distributed under the GNU General Public License, version 2
+  or at your option any later version. Read the file gpl.txt for details.
 */
 const char DlgNewDisk_fileid[] = "Hatari dlgNewDisk.c : " __DATE__ " " __TIME__;
 
@@ -13,6 +13,8 @@ const char DlgNewDisk_fileid[] = "Hatari dlgNewDisk.c : " __DATE__ " " __TIME__;
 #include "sdlgui.h"
 #include "file.h"
 #include "log.h"
+
+#include "gui-retro.h"
 
 #define DLGNEWDISK_DECTRACK   3
 #define DLGNEWDISK_TRACKSTR   4
@@ -36,9 +38,9 @@ static SGOBJ newdiskdlg[] =
 	{ SGBOX, 0, 0, 0,0, 29,14, NULL },
 	{ SGTEXT, 0, 0, 6,1, 16,1, "New floppy image" },
 	{ SGTEXT, 0, 0, 2,3, 7,1, "Tracks:" },
-	{ SGBUTTON,SG_EXIT/*0*/, 0, 12,3, 1,1, "\xD" },//"\x04" },   /* Left-arrow button  */
+	{ SGBUTTON, SG_EXIT/*0*/, 0, 12,3, 1,1, SGARROWLEFT/*"\x04"*/ },   /* Left-arrow button  */
 	{ SGTEXT, 0, 0, 14,3, 2,1, szTracks },
-	{ SGBUTTON, SG_EXIT/*0*/, 0, 17,3, 1,1,  "\x9" }, //"\x03" },   /* Right-arrow button */
+	{ SGBUTTON, SG_EXIT/*0*/, 0, 17,3, 1,1, SGARROWRIGHT/*"\x03"*/ },   /* Right-arrow button */
 	{ SGTEXT, 0, 0, 2,5, 8,1, "Sectors:" },
 	{ SGRADIOBUT, 0, SG_SELECTED, 12,5, 4,1, " 9" },
 	{ SGRADIOBUT, 0, 0, 17,5, 4,1, "10" },
@@ -115,7 +117,7 @@ char *DlgNewDisk_Main(void)
 
 	/* Draw and process the dialog */
 	do
-	{       
+	{
 		but = SDLGui_DoDialog(newdiskdlg, NULL);
 		switch(but)
 		{

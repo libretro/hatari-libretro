@@ -1,8 +1,8 @@
 /*
   Hatari - dlgJoystick.c
 
-  This file is distributed under the GNU Public License, version 2 or at
-  your option any later version. Read the file gpl.txt for details.
+  This file is distributed under the GNU General Public License, version 2
+  or at your option any later version. Read the file gpl.txt for details.
 */
 const char DlgJoystick_fileid[] = "Hatari dlgJoystick.c : " __DATE__ " " __TIME__;
 
@@ -11,6 +11,7 @@ const char DlgJoystick_fileid[] = "Hatari dlgJoystick.c : " __DATE__ " " __TIME_
 #include "dialog.h"
 #include "sdlgui.h"
 
+#include "gui-retro.h"
 
 #define DLGJOY_DISABLED    3
 #define DLGJOY_USEREALJOY  4
@@ -40,20 +41,20 @@ static SGOBJ joydlg[] =
 	{ SGRADIOBUT, 0, 0, 2,9, 20,1, "use real joystick:" },
 	{ SGRADIOBUT, 0, 0, 2,7, 14,1, "use keyboard" },
 
-	{ SGBUTTON, 0, 0, 19,7, 11,1, "Define keys" },
+	{ SGBUTTON, SG_EXIT/*0*/, 0, 19,7, 11,1, "Define keys" },
 	{ SGBOX, 0, 0, 5,11, 22,1, NULL },
 	{ SGTEXT, 0, 0, 6,11, 20,1, sSdlStickName },
-	{ SGBUTTON, 0, 0, 4,11, 1,1, "\x04" },         /* Arrow left */
-	{ SGBUTTON, 0, 0, 27,11, 1,1, "\x03" },        /* Arrow right */
+	{ SGBUTTON, SG_EXIT/*0*/, 0, 4,11, 1,1, SGARROWLEFT/*"\x04"*/ },         /* Arrow left */
+	{ SGBUTTON, SG_EXIT/*0*/, 0, 27,11, 1,1,SGARROWRIGHT/* "\x03"*/ },        /* Arrow right */
 
 	{ SGCHECKBOX, 0, 0, 2,13, 17,1, "Enable autofire" },
 
 	{ SGBOX, 0, 0, 4,3, 24,1, NULL },
 	{ SGTEXT, 0, 0, 5,3, 22,1, NULL },
-	{ SGBUTTON, 0, 0, 1,3, 3,1, "\x04" },         /* Arrow left */
-	{ SGBUTTON, 0, 0, 28,3, 3,1, "\x03" },        /* Arrow right */
+	{ SGBUTTON, SG_EXIT/*0*/, 0, 1,3, 3,1, SGARROWLEFT/*"\x04"*/ },         /* Arrow left */
+	{ SGBUTTON, SG_EXIT/*0*/, 0, 28,3, 3,1, SGARROWRIGHT/*"\x03"*/ },        /* Arrow right */
 
-	{ SGBUTTON, SG_DEFAULT, 0, 6,16, 20,1, "Back to main menu" },
+	{ SGBUTTON, SG_EXIT/*SG_DEFAULT*/, 0, 6,16, 20,1, "Back to main menu" },
 	{ -1, 0, 0, 0,0, 0,0, NULL }
 };
 
@@ -89,7 +90,8 @@ static char *sJoystickNames[JOYSTICK_COUNT] =
  */
 static void DlgJoystick_DefineOneKey(char *pType, int *pKey)
 {
-/*
+//RETRO
+#if 0
 	SDL_Event sdlEvent;
 
 	if (bQuitProgram)
@@ -116,7 +118,7 @@ static void DlgJoystick_DefineOneKey(char *pType, int *pKey)
 		}
 	} while (sdlEvent.type != SDL_KEYUP);
 	SDL_Delay(200);
-*/
+#endif
 }
 
 
@@ -145,11 +147,11 @@ static void DlgJoystick_ReadValuesFromConf(int nActJoy, int nMaxId)
 	int i;
 
 	/* Check if joystick ID is available */
-	if (1/*SDL_NumJoysticks() == 0*/)
+	if (SDL_NumJoysticks() == 0)
 	{
 		strcpy(sSdlStickName, "0: (none available)");
 	}
-/*	else if (ConfigureParams.Joysticks.Joy[nActJoy].nJoyId <= nMaxId)
+	else if (ConfigureParams.Joysticks.Joy[nActJoy].nJoyId <= nMaxId)
 	{
 		snprintf(sSdlStickName, 20, "%i: %s", ConfigureParams.Joysticks.Joy[nActJoy].nJoyId,
 		         SDL_JoystickName(ConfigureParams.Joysticks.Joy[nActJoy].nJoyId));
@@ -157,11 +159,11 @@ static void DlgJoystick_ReadValuesFromConf(int nActJoy, int nMaxId)
 	else
 	{
 		snprintf(sSdlStickName, 20, "0: %s", SDL_JoystickName(0));
-		// Unavailable joystick ID -> disable it if necessary/
+		/* Unavailable joystick ID -> disable it if necessary*/
 		if (ConfigureParams.Joysticks.Joy[nActJoy].nJoystickMode == JOYSTICK_REALSTICK)
 			ConfigureParams.Joysticks.Joy[nActJoy].nJoystickMode = JOYSTICK_DISABLED;
 	}
-*/
+
 	for (i = DLGJOY_DISABLED; i <= DLGJOY_USEKEYS; i++)
 		joydlg[i].state &= ~SG_SELECTED;
 	joydlg[DLGJOY_DISABLED + ConfigureParams.Joysticks.Joy[nActJoy].nJoystickMode].state |= SG_SELECTED;
@@ -208,7 +210,7 @@ void Dialog_JoyDlg(void)
 
 	joydlg[DLGJOY_STJOYNAME].txt = sJoystickNames[nActJoy];
 
-	nMaxJoyId = 0;//SDL_NumJoysticks() - 1;
+	nMaxJoyId = SDL_NumJoysticks() - 1;
 	if (nMaxJoyId > 5)
 		nMaxJoyId = 5;
 
@@ -220,7 +222,6 @@ void Dialog_JoyDlg(void)
     	but = SDLGui_DoDialog(joydlg, NULL);
 		switch (but)
 		{
-/*
 		 case DLGJOY_PREVSDLJOY:        // Select the previous SDL joystick
 			if (ConfigureParams.Joysticks.Joy[nActJoy].nJoyId > 0)
 			{
@@ -237,9 +238,8 @@ void Dialog_JoyDlg(void)
 				         SDL_JoystickName(ConfigureParams.Joysticks.Joy[nActJoy].nJoyId));
 			}
 			break;
-*/
 		 case DLGJOY_DEFINEKEYS:        // Define new keys for keyboard emulation
-			DlgJoystick_DefineKeys(nActJoy);
+			//DlgJoystick_DefineKeys(nActJoy);
 			break;
 		 case DLGJOY_PREVSTJOY:         // Switch to the previous ST joystick setup tab
 			if (nActJoy > 0)
@@ -260,6 +260,7 @@ void Dialog_JoyDlg(void)
 			}
 			break;
 		}
+                gui_poll_events();
 	}
 	while (but != DLGJOY_EXIT && but != SDLGUI_QUIT
 	       && but != SDLGUI_ERROR && !bQuitProgram);

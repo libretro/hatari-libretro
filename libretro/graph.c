@@ -5,101 +5,6 @@
 
 #include "graph.h"
 
-extern unsigned char  msx[];
-
-void printch(unsigned short *buffer,int x, int y, unsigned  short  couleur,unsigned char ch,int taille,int pl,int zde)
-{          
-	int i,j;
-	unsigned char *font;
-        int rectx,recty;
-    
-  	font=&msx[(int)ch * 8];
-  	
-	for(i=0;i<8;i++,font++)
-	{
-	     for(j=0;j<8;j++)
-	     {
-         	if ((*font &(128>>j)))
-         	{
-			rectx = x+(j<<0);
-                 	if(taille==1)recty = y+(i<<1);
-                 	else recty = y+(i<<0);
-                
-		 	buffer[recty* VIRTUAL_WIDTH  + rectx] = couleur; 
-	             	if(pl==1) buffer[(recty+1)* VIRTUAL_WIDTH  + rectx] = couleur; 				
-
-            	}
-	     }
-        }
-}
-
-void textpixel(unsigned  short *buffer,int x,int y,unsigned  short  color,int tail,int plein,int zdep, char *string,...)
-{
-   int boucle=0;  
-   char	text[256];	   	
-   va_list	ap;			
-   
-   if (string == NULL)return;		
-		
-   va_start(ap, string);		
-      vsprintf(text, string, ap);	
-   va_end(ap);	
-   
-   while(text[boucle]!=0){
-     printch(buffer,x,y,color,text[boucle],tail,plein,zdep);
-     boucle++;x+=8;//6;
-   }
-	
-}
-
-void textCLpixel(unsigned  short  *buffer,int lim,int x,int x2,int y,unsigned  short color,int tail,int plein,int zdep,char *string,...)
-{
-   int boucle=0;  
-   char	text[256];	   	
-   va_list	ap;			
-   
-   if (string == NULL)return;		
-		
-   va_start(ap, string);		
-      vsprintf(text, string, ap);	
-   va_end(ap);
-   	
-   while(text[boucle]!=0 && boucle<lim)boucle++;   
-   boucle=(x2-x)/2 -(boucle*3);
-   x=boucle;
-   
-   boucle=0;
-   while(text[boucle]!=0 && boucle<lim){
-     printch(buffer,x,y,color,text[boucle],tail,plein,zdep);
-     boucle++;x+=8;//6;
-   }
-	
-}
-
-void textCpixel(unsigned  short *buffer,int x,int x2,int y,unsigned  short  color,int tail,int plein,int zdep,char *string,...)
-{
-   int boucle=0;  
-   char	text[256];	   	
-   va_list	ap;			
-   
-   if (string == NULL)return;		
-		
-   va_start(ap, string);		
-      vsprintf(text, string, ap);	
-   va_end(ap);
-   	
-   while(text[boucle]!=0)boucle++;   
-   boucle=(x2-x)/2 -(boucle*3);
-   x=boucle;
-   
-   boucle=0;
-   while(text[boucle]!=0){
-     printch(buffer,x,y,color,text[boucle],tail,plein,zdep);
-     boucle++;x+=8;//6;
-   }
-	
-}
-
 void DrawPointBmp(unsigned  short  *buffer,int x,int y,unsigned  short color){
 	
 	int idx;
@@ -237,27 +142,6 @@ void DrawlineBmp(unsigned  short  *buffer,int x1,int y1,int x2,int y2,unsigned  
 	}
 
 }
-/*
-void DrawBox(unsigned  short  *buf,box b,char t[],unsigned  short  color){
-
-	DrawBoxBmp(buf,b.x,b.y,b.dx,b.dy,color); 	
-	textCpixel(buf,b.x, 3*b.x + b.dx ,b.y+2,color,1,1,4,"%s",t);
-
-}
-
-void DrawBoxF(unsigned  short  *buf,box b,char t[],unsigned short  color,unsigned  short  border){
-
-	int ydec=b.y+(b.dy/2)-4;
-
-	if(ydec<b.y+2)ydec=b.y+2;
-
-	DrawBoxBmp(buf,b.x,b.y,b.dx,b.dy,border);
-	DrawFBoxBmp(buf,b.x+1,b.y+1,b.dx-2,b.dy-2,color);
- 	
-	textCpixel(buf,b.x, 3*b.x + b.dx , ydec ,border,1,1,4,"%s",t);
-
-}
-*/
 
 const float DEG2RAD = 3.14159/180;
 
@@ -282,36 +166,6 @@ void DrawCircle(unsigned short *buf,int x, int y, int radius,unsigned short rgba
     	
 }
 
-//UINT16
-void filter_scale2x(unsigned char *srcPtr, unsigned srcPitch, 
-                      unsigned char *dstPtr, unsigned dstPitch,
-		      int width, int height)
-{
-	unsigned int nextlineSrc = srcPitch / sizeof(short);
-	short *p = (short *)srcPtr;
-
-	unsigned int nextlineDst = dstPitch / sizeof(short);
-	short *q = (short *)dstPtr;
-  
-	while(height--) {
-		int i = 0, j = 0;
-		for(i = 0; i < width; ++i, j += 2) {
-			short B = *(p + i - nextlineSrc);
-			short D = *(p + i - 1);
-			short E = *(p + i);
-			short F = *(p + i + 1);
-			short H = *(p + i + nextlineSrc);
-
-			*(q + j) = D == B && B != F && D != H ? D : E;
-			*(q + j + 1) = B == F && B != D && F != H ? F : E;
-			*(q + j + nextlineDst) = D == H && D != B && H != F ? D : E;
-			*(q + j + nextlineDst + 1) = H == F && D != H && B != F ? F : E;
-		}
-		p += nextlineSrc;
-		q += nextlineDst << 1;
-	}
-}
- 
 #include "font2.c"
 
 void Draw_string(unsigned short *surf, signed short int x, signed short int y, const unsigned char *string,unsigned short maxstrlen,unsigned short xscale, unsigned short yscale, unsigned short fg, unsigned short bg)

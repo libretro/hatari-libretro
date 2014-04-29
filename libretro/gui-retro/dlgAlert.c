@@ -25,6 +25,7 @@ const char DlgAlert_fileid[] = "Hatari dlgAlert.c : " __DATE__ " " __TIME__;
 #include "screen.h"
 #include "sdlgui.h"
 
+#include "gui-retro.h"
 
 #define MAX_LINES 4
 
@@ -47,8 +48,8 @@ static SGOBJ alertdlg[] =
 	{ SGTEXT, 0, 0, 1,2, 50,1, dlglines[1] },
 	{ SGTEXT, 0, 0, 1,3, 50,1, dlglines[2] },
 	{ SGTEXT, 0, 0, 1,4, 50,1, dlglines[3] },
-	{ SGBUTTON,SG_EXIT/* SG_DEFAULT*/, 0, 5,5, 8,1, "OK" },
-	{ SGBUTTON,SG_EXIT/* SG_CANCEL*/, 0, 24,5, 8,1, "Cancel" },
+	{ SGBUTTON,  SG_EXIT/*SG_DEFAULT*/, 0, 5,5, 8,1, "OK" },
+	{ SGBUTTON,  SG_EXIT/*SG_CANCEL*/, 0, 24,5, 8,1, "Cancel" },
 	{ -1, 0, 0, 0,0, 0,0, NULL }
 };
 
@@ -155,11 +156,11 @@ static int DlgAlert_ShowDlg(const char *text)
 	if (SDLGui_SetScreen(sdlscrn))
 		return false;
 	SDLGui_CenterDlg(alertdlg);
-/*
+
 	SDL_GetMouseState(&nOldMouseX, &nOldMouseY);
 	bOldMouseVisibility = SDL_ShowCursor(SDL_QUERY);
 	SDL_ShowCursor(SDL_ENABLE);
-*/
+
         do
 	{                     
 	       i = SDLGui_DoDialog(alertdlg, NULL);
@@ -169,11 +170,10 @@ static int DlgAlert_ShowDlg(const char *text)
 	while (i != DLGALERT_OK && i != DLGALERT_CANCEL && i != SDLGUI_QUIT
 	        && i != SDLGUI_ERROR && !bQuitProgram);
 
-/*
 	SDL_UpdateRect(sdlscrn, 0,0, 0,0);
 	SDL_ShowCursor(bOldMouseVisibility);
 	Main_WarpMouse(nOldMouseX, nOldMouseY);
-*/
+
 	return (i == DLGALERT_OK);
 }
 

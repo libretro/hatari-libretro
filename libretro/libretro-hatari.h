@@ -8,11 +8,6 @@
 #include <stdio.h>
 
 #include "SDL.h"
-/*
-#define Uint8 unsigned char
-#define Uint16 unsigned short int
-#define Uint32 unsigned int
-*/
 
 #include <stdbool.h>
 #include "ikbd.h"
@@ -21,7 +16,6 @@
 extern const char SDLKeyToSTScanCode[512] ;
 
 #include "libco/libco.h"
-#include "SDL.h"
 
 extern cothread_t mainThread;
 extern cothread_t emuThread;
@@ -31,20 +25,9 @@ extern char Key_Sate2[512];
 
 extern int pauseg; 
 
-/*
-typedef struct
-{
-	int w, h;
-	int stride;
-    	unsigned char * bitmap;
-} SDL_Surface;
-*/
-
 #include "SDL_video.h"
 
 #define LOGI printf
-
-//#include "retroscreen.h"
 
 #define NPLGN 10
 #define NLIGN 5

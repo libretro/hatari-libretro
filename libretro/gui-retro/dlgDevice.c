@@ -1,8 +1,8 @@
 /*
   Hatari - dlgDevice.c
 
-  This file is distributed under the GNU Public License, version 2 or at
-  your option any later version. Read the file gpl.txt for details.
+  This file is distributed under the GNU General Public License, version 2
+  or at your option any later version. Read the file gpl.txt for details.
 
   Device (Printer etc.) setup dialog
 */
@@ -15,6 +15,7 @@ const char DlgDevice_fileid[] = "Hatari dlgDevice.c : " __DATE__ " " __TIME__;
 #include "file.h"
 #include "screen.h"
 
+#include "gui-retro.h"
 
 #define DEVDLG_PRNENABLE       3
 #define DEVDLG_PRNBROWSE       5
@@ -80,7 +81,7 @@ static SGOBJ devicedlg[] =
  */
 void Dialog_DeviceDlg(void)
 {
-	int but=0;
+	int but;
 
 	SDLGui_CenterDlg(devicedlg);
 
@@ -108,8 +109,7 @@ void Dialog_DeviceDlg(void)
 
 	/* The devices dialog main loop */
 	do
-	{        
-                
+	{
 		but = SDLGui_DoDialog(devicedlg, NULL);
 
 		switch(but)
@@ -145,7 +145,7 @@ void Dialog_DeviceDlg(void)
                                               true);
 			break;
 		}
-                gui_poll_events();
+		gui_poll_events();
 	}
 	while (but != DEVDLG_EXIT && but != SDLGUI_QUIT
 	       && but != SDLGUI_ERROR && !bQuitProgram);

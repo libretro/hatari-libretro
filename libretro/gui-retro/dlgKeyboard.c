@@ -1,8 +1,8 @@
 /*
   Hatari - dlgKeyboard.c
 
-  This file is distributed under the GNU Public License, version 2 or at
-  your option any later version. Read the file gpl.txt for details.
+  This file is distributed under the GNU General Public License, version 2
+  or at your option any later version. Read the file gpl.txt for details.
 */
 const char DlgKeyboard_fileid[] = "Hatari dlgKeyboard.c : " __DATE__ " " __TIME__;
 
@@ -15,6 +15,7 @@ const char DlgKeyboard_fileid[] = "Hatari dlgKeyboard.c : " __DATE__ " " __TIME_
 #include "file.h"
 #include "screen.h"
 
+#include "gui-retro.h"
 
 #define DLGKEY_SYMBOLIC  3
 #define DLGKEY_SCANCODE  4
@@ -36,9 +37,9 @@ static SGOBJ keyboarddlg[] =
 	{ SGRADIOBUT, 0, 0, 30,5, 11,1, "From file" },
 	{ SGTEXT, 0, 0, 2,7, 13,1, "Mapping file:" },
 	{ SGTEXT, 0, 0, 2,8, 42,1, NULL },
-	{ SGBUTTON, 0, 0, 36,7, 8,1, "Browse" },
+	{ SGBUTTON, SG_EXIT/*0*/, 0, 36,7, 8,1, "Browse" },
 	{ SGCHECKBOX, 0, 0, 2,10, 41,1, "Disable key repeat in fast forward mode" },
-	{ SGBUTTON, SG_DEFAULT, 0, 13,12, 20,1, "Back to main menu" },
+	{ SGBUTTON, SG_EXIT/*SG_DEFAULT*/, 0, 13,12, 20,1, "Back to main menu" },
 	{ -1, 0, 0, 0,0, 0,0, NULL }
 };
 
@@ -81,6 +82,7 @@ void Dialog_KeyboardDlg(void)
 			                      ConfigureParams.Keyboard.szMappingFileName,
 			                      keyboarddlg[DLGKEY_MAPNAME].w, false);
 		}
+                gui_poll_events();
 	}
 	while (but != DLGKEY_EXIT && but != SDLGUI_QUIT
 	        && but != SDLGUI_ERROR && !bQuitProgram);
