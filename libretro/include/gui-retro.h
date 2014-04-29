@@ -4,6 +4,7 @@
 #undef SGCHECKBOX_SELECTED 
 #undef SGARROWUP 
 #undef SGARROWDOWN 
+#undef SGFOLDER
 
 #define SGRADIOBUTTON_NORMAL 46//12
 #define SGRADIOBUTTON_SELECTED 219//13
@@ -13,3 +14,5 @@
 #define SGARROWDOWN "\xCA"// 2
 #define SGARROWLEFT "<"// 4
 #define SGARROWRIGHT ">"// 3
+#define SGFOLDER     "~"
+
