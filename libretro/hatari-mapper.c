@@ -42,7 +42,7 @@ char RPATH[512];
 
 //EMU FLAGS
 int NPAGE=-1, KCOL=1, BKGCOLOR=0, MAXPAS=6;
-int SHIFTON=-1,MOUSEMODE=-1,NUMJOY=0,SHOWKEY=-1,PAS=4,STATUTON=-1;
+int SHIFTON=-1,MOUSEMODE=-1,NUMJOY=0,SHOWKEY=-1,PAS=4,STATUTON=1;//-1;
 int SND; //SOUND ON/OFF
 static int firstps=0;
 int pauseg=0; //enter_gui
@@ -179,20 +179,21 @@ SDL_Surface *prepare_texture(int w,int h,int b){
  
 	bitmp->format->BitsPerPixel = 16;
 	bitmp->format->BytesPerPixel = 2;
-	bitmp->format->Rloss=5;
-	bitmp->format->Gloss=6;
-	bitmp->format->Bloss=5;
+	bitmp->format->Rloss=3;
+	bitmp->format->Gloss=3;
+	bitmp->format->Bloss=3;
 	bitmp->format->Aloss=0;
 	bitmp->format->Rshift=11;
 	bitmp->format->Gshift=6;
 	bitmp->format->Bshift=0;
-	bitmp->format->Ashift=16;
+	bitmp->format->Ashift=0;
 	bitmp->format->Rmask=0x0000F800;
 	bitmp->format->Gmask=0x000007E0;
 	bitmp->format->Bmask=0x0000001F;
 	bitmp->format->Amask=0x00000000;
 	bitmp->format->colorkey=0;
 	bitmp->format->alpha=0;
+	bitmp->format->palette = NULL;
 
 	bitmp->flags=0;
 	bitmp->w=w;

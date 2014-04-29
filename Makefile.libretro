@@ -151,7 +151,6 @@ $(DBG)/console.o \
 $(DBG)/68kDisass.o
 
 FLP_SRCS = \
-$(FLP)/floppy_ipf.o \
 $(FLP)/createBlankImage.o \
 $(FLP)/dim.o \
 $(FLP)/msa.o \
@@ -161,7 +160,7 @@ $(FLP)/zip.o
 CORE_SRCS = \
 $(EMU)/acia.o \
 $(EMU)/audio.o \
-$(ALTEMU)/avi_record.o \
+$(EMU)/avi_record.o \
 $(EMU)/bios.o \
 $(EMU)/blitter.o \
 $(EMU)/cart.o \
@@ -178,6 +177,7 @@ $(EMU)/dmaSnd.o \
 $(EMU)/fdc.o \
 $(EMU)/file.o \
 $(EMU)/floppy.o \
+$(EMU)/floppy_ipf.o \
 $(EMU)/gemdos.o \
 $(EMU)/hd6301_cpu.o \
 $(EMU)/hdc.o \

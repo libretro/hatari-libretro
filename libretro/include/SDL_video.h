@@ -10,8 +10,34 @@ typedef struct{
      Uint16 w, h;
 } SDL_Rect;
 
+
+typedef struct SDL_Color
+{
+ Uint8 r;
+ Uint8 g;
+ Uint8 b;
+ Uint8 a;
+} SDL_Color;
+
+/*
+typedef struct SDL_color{
+int r;
+int g;
+int b;
+int pixel;
+} SDL_Color;
+*/
+#define SDL_Colour SDL_Color
+typedef struct SDL_Palette
+{
+  int ncolors;
+  SDL_Color *colors;
+  Uint32 version;
+  int refcount;
+} SDL_Palette;
+ 
 typedef struct {
-      //SDL_Palette *palette;
+      SDL_Palette *palette;
       Uint8  BitsPerPixel;
       Uint8  BytesPerPixel;
       Uint8  Rloss, Gloss, Bloss, Aloss;

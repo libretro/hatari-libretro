@@ -19,13 +19,6 @@ extern int Reset_Warm(void);
 #define RGB565(r, g, b)  (((r) << (5+6)) | ((g) << 6) | (b))
 #define SDL_MapRGB(a, r, g, b) RGB565( (r)>>3, (g)>>3, (b)>>3)
 
-typedef struct SDL_color{
-int r;
-int g;
-int b;
-int pixel;
-} SDL_Color;
-
 typedef struct SDL_Event{
 Uint8 type;
 } SDL_Event;
