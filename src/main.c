@@ -892,12 +892,13 @@ int main(int argc, char *argv[])
 				(Uint32)ConfigureParams.Video.AviRecordFps << CLOCKS_TIMINGS_SHIFT_VBL ,
 			1 << CLOCKS_TIMINGS_SHIFT_VBL ,
 			ConfigureParams.Video.AviRecordVcodec );
-
+/*
 #ifdef __LIBRETRO__
     	//load retro game
     	Floppy_SetDiskFileName(0, (char*)RPATH, NULL);
     	Floppy_InsertDiskIntoDrive(0);
 #endif
+*/
 	/* Run emulation */
 	Main_UnPauseEmulation();
 	M68000_Start();                 /* Start emulation */
