@@ -580,7 +580,11 @@ SDL_CreateThread(int (SDLCALL * fn) (void *), void *data)
 }
 
 #elif defined WIIPORT
+#include <sys/errno.h> 
+#include <unistd.h>
+#include <signal.h>
 
+#include <ogc/semaphore.h>
 //WII
 #define LWP_PRIO_NORMAL 64
 
@@ -1232,6 +1236,9 @@ SDL_WaitThread(SDL_Thread * thread, int *status)
 
 #elif defined WIN32PORT
 
+#include <unistd.h>
+#include <windows.h>
+
 struct SDL_semaphore {
 #if defined(_WIN32_WCE) && (_WIN32_WCE < 300)
 	SYNCHHANDLE id;
@@ -1819,6 +1826,13 @@ SDL_WaitThread(SDL_Thread * thread, int *status)
 }
 
 #else //pthread
+
+#include <sys/errno.h> 
+#include <unistd.h>
+#include <signal.h>
+
+#include <pthread.h>
+#include <semaphore.h>
 
 struct SDL_semaphore
 {
