@@ -255,6 +255,9 @@ $(TARGET): $(OBJECTS)
 else ifeq ($(platform), win)
 $(TARGET): $(OBJECTS)
 	$(CC) $(fpic) $(SHARED) $(INCLUDES) -o $@ $(OBJECTS)  -lm -lz
+else ifeq ($(platform), android)
+$(TARGET): $(OBJECTS)
+	$(CC) $(fpic) $(SHARED) $(INCLUDES) -o $@ $(OBJECTS)  -lm -lz
 else
 $(TARGET): $(OBJECTS)
 	$(CC) $(fpic) $(SHARED) $(INCLUDES) -o $@ $(OBJECTS)  -lm -lz -lpthread
