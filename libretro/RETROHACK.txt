@@ -7,7 +7,6 @@ src/keymap.c 		-> #include "SDL.h"	 		// add SDL.h include (retro wrapper)
 src/ikbd.c   		-> IKBD_GetJoystickData()		// replace Joy_GetStickData with mxjoy0
 src/main.c		-> All 					// retro hack
 src/resolution.c	-> Most of all				// comment & bypass to use retrow X retroh @ pitch=2
-src/rs232.c		-> #ifdef RETRO				// #ifdef to use specific thread instead of SDL_thread
 src/screen.c		-> Screen_Init() / reset_screen()	// skip icon setup and add reset_screen func  
 src/sound.c		-> Retro_Audio_CallBack()		// add Retro_Audio_CallBack and invoke it in Sound_Update_VBL
 src/statusbar.c		-> All 					// #ifdef to skip most of statusbar
