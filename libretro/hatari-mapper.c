@@ -179,20 +179,21 @@ SDL_Surface *prepare_texture(int w,int h,int b){
  
 	bitmp->format->BitsPerPixel = 16;
 	bitmp->format->BytesPerPixel = 2;
-	bitmp->format->Rloss=5;
-	bitmp->format->Gloss=6;
-	bitmp->format->Bloss=5;
+	bitmp->format->Rloss=3;
+	bitmp->format->Gloss=3;
+	bitmp->format->Bloss=3;
 	bitmp->format->Aloss=0;
 	bitmp->format->Rshift=11;
 	bitmp->format->Gshift=6;
 	bitmp->format->Bshift=0;
-	bitmp->format->Ashift=16;
+	bitmp->format->Ashift=0;
 	bitmp->format->Rmask=0x0000F800;
 	bitmp->format->Gmask=0x000007E0;
 	bitmp->format->Bmask=0x0000001F;
 	bitmp->format->Amask=0x00000000;
 	bitmp->format->colorkey=0;
 	bitmp->format->alpha=0;
+	bitmp->format->palette = NULL;
 
 	bitmp->flags=0;
 	bitmp->w=w;
@@ -251,17 +252,14 @@ void Print_Statut(){
 
 	if(LEDA){
 		DrawFBoxBmp(bmp,CROP_WIDTH-6*BOXDEC-6-16,CROP_HEIGHT-0,16,16,RGB565(0,7,0));//led A drive
-		//textpixel  (bmp,CROP_WIDTH-6*BOXDEC-6-16,CROP_HEIGHT-0,0,1,1,4," A");
 		Draw_text(bmp,CROP_WIDTH-6*BOXDEC-6-16,CROP_HEIGHT-0,0xffff,0x0,1,2,40," A");
 	}	
 	if(LEDB){
 		DrawFBoxBmp(bmp,CROP_WIDTH-7*BOXDEC-6-16,CROP_HEIGHT-0,16,16,RGB565(0,7,0));//led B drive
-		//textpixel  (bmp,CROP_WIDTH-7*BOXDEC-6-16,CROP_HEIGHT-0,0,1,1,4," B");
 		Draw_text(bmp,CROP_WIDTH-7*BOXDEC-6-16,CROP_HEIGHT-0,0xffff,0x0,1,2,40," B");
 	}
 	if(LEDC){
 		DrawFBoxBmp(bmp,CROP_WIDTH-8*BOXDEC-6-16,CROP_HEIGHT-0,16,16,RGB565(0,7,0));//led C drive
-		//textpixel  (bmp,CROP_WIDTH-8*BOXDEC-6-16,CROP_HEIGHT-0,0,1,1,4," C");
 		Draw_text(bmp,CROP_WIDTH-8*BOXDEC-6-16,CROP_HEIGHT-0,0xffff,0x0,1,2,40," C");
 		LEDC=0;
 	}

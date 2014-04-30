@@ -4,6 +4,8 @@
 
 #include "STkeymap.h"
 
+#include "cmdline.c"
+
 cothread_t mainThread;
 cothread_t emuThread;
 
@@ -79,9 +81,8 @@ static void update_variables(void)
 
 static void retro_wrap_emulator()
 {    
-    char **argv2 = (char *[]){"hatari\0", "\0"};
 
-    hmain(1,argv2);
+    pre_main(RPATH);
 
     pauseg=-1;
 
@@ -169,7 +170,8 @@ void retro_get_system_info(struct retro_system_info *info)
    	info->library_version  = "1.7";
    	info->valid_extensions = "ST|st|MSA|msa|ZIP|zip";
    	info->need_fullpath    = true;
-        info->block_extract = false;	
+        info->block_extract = false;
+
 }
 
 void retro_get_system_av_info(struct retro_system_av_info *info)

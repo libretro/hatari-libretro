@@ -90,14 +90,14 @@ FALCON = $(EMU)/falcon
 DBG = $(EMU)/debug
 FLP = $(EMU)
 GUI = $(LIBRETRO)/gui-retro
-ALTEMU = $(LIBRETRO)/altsrc
+CPU_PREGEN = $(LIBRETRO)/uae-cpu-pregen
 LIBCOOBJ = $(LIBRETRO)/utils/libco
 LIBUTILS = $(LIBRETRO)/utils
 
 CPUC_SRCS = \
-$(ALTEMU)/uae-cpu-pregen/cpudefs.o \
-$(ALTEMU)/uae-cpu-pregen/cpuemu.o \
-$(ALTEMU)/uae-cpu-pregen/cpustbl.o \
+$(CPU_PREGEN)/cpudefs.o \
+$(CPU_PREGEN)/cpuemu.o \
+$(CPU_PREGEN)/cpustbl.o \
 $(CPU)/hatari-glue.o \
 $(CPU)/memory.o \
 $(CPU)/newcpu.o \
@@ -151,7 +151,6 @@ $(DBG)/console.o \
 $(DBG)/68kDisass.o
 
 FLP_SRCS = \
-$(FLP)/floppy_ipf.o \
 $(FLP)/createBlankImage.o \
 $(FLP)/dim.o \
 $(FLP)/msa.o \
@@ -161,7 +160,7 @@ $(FLP)/zip.o
 CORE_SRCS = \
 $(EMU)/acia.o \
 $(EMU)/audio.o \
-$(ALTEMU)/avi_record.o \
+$(EMU)/avi_record.o \
 $(EMU)/bios.o \
 $(EMU)/blitter.o \
 $(EMU)/cart.o \
@@ -178,6 +177,7 @@ $(EMU)/dmaSnd.o \
 $(EMU)/fdc.o \
 $(EMU)/file.o \
 $(EMU)/floppy.o \
+$(EMU)/floppy_ipf.o \
 $(EMU)/gemdos.o \
 $(EMU)/hd6301_cpu.o \
 $(EMU)/hdc.o \
@@ -218,8 +218,7 @@ $(EMU)/vdi.o \
 $(EMU)/video.o \
 $(EMU)/wavFormat.o \
 $(EMU)/xbios.o \
-$(EMU)/ymFormat.o \
-$(ALTEMU)/bmp.o
+$(EMU)/ymFormat.o
 
 LIBCO_SRCS = $(LIBCOOBJ)/libco.o 
 
@@ -236,11 +235,11 @@ BUILD_APP =  $(ZLIB_OBJECTS) $(CPUC_SRCS) $(FALC_SRCS)  $(FLP_SRCS) $(DBG_SRCS) 
 
 HINCLUDES := -I./$(EMU)  -I./$(CPU)  -I./$(FALCON)  \
 	-I./$(EMU)/includes -I./$(DBG) -I./$(FLP) \
-	-I$(LIBRETRO) -I$(LIBRETRO)/include -I$(LIBUTILS) -I$(ALTEMU)/uae-cpu-pregen
+	-I$(LIBRETRO) -I$(LIBRETRO)/include -I$(LIBUTILS) -I$(CPU_PREGEN)
 
 
 OBJECTS := $(LIBRETRO)/libretro-hatari.o $(LIBRETRO)/hatari-mapper.o $(LIBRETRO)/vkbd.o \
-	$(LIBRETRO)/graph.o $(BUILD_APP)
+	$(LIBRETRO)/graph.o $(LIBRETRO)/bmp.o $(BUILD_APP)
 
 #END COMMON PART 
 
@@ -254,6 +253,9 @@ $(TARGET): $(OBJECTS)
 	$(AR) rcs $@ $(OBJECTS) 
 
 else ifeq ($(platform), win)
+$(TARGET): $(OBJECTS)
+	$(CC) $(fpic) $(SHARED) $(INCLUDES) -o $@ $(OBJECTS)  -lm -lz
+else ifeq ($(platform), android)
 $(TARGET): $(OBJECTS)
 	$(CC) $(fpic) $(SHARED) $(INCLUDES) -o $@ $(OBJECTS)  -lm -lz
 else
