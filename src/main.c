@@ -697,8 +697,15 @@ static void Main_Init(void)
 		/* If loading of the TOS failed, we bring up the GUI to let the
 		 * user choose another TOS ROM file. */
 #ifdef __LIBRETRO__
-		pauseg=1;
-		pause_select();
+
+		//try to load from retro_system_directory 
+		// else load GUI
+
+		if(LoadTosFromRetroSystemDir()){
+			pauseg=1;
+			pause_select();
+		}
+	
 #else
 		Dialog_DoProperty();
 #endif
@@ -892,13 +899,7 @@ int main(int argc, char *argv[])
 				(Uint32)ConfigureParams.Video.AviRecordFps << CLOCKS_TIMINGS_SHIFT_VBL ,
 			1 << CLOCKS_TIMINGS_SHIFT_VBL ,
 			ConfigureParams.Video.AviRecordVcodec );
-/*
-#ifdef __LIBRETRO__
-    	//load retro game
-    	Floppy_SetDiskFileName(0, (char*)RPATH, NULL);
-    	Floppy_InsertDiskIntoDrive(0);
-#endif
-*/
+
 	/* Run emulation */
 	Main_UnPauseEmulation();
 	M68000_Start();                 /* Start emulation */

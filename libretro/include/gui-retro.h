@@ -14,5 +14,11 @@
 #define SGARROWDOWN "\xCA"// 2
 #define SGARROWLEFT "<"// 4
 #define SGARROWRIGHT ">"// 3
-#define SGFOLDER     "~"
+#define SGFOLDER     '~'
+
+#include "graph.h"
+
+extern void gui_poll_events();
+extern int  GuiGetMouseState( int * x,int * y);
+
 

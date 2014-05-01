@@ -1,3 +1,4 @@
+#include <ctype.h>
 
 //Args for experimental_cmdline
 static char ARGUV[64][1024];
@@ -7,6 +8,9 @@ static unsigned char ARGUC=0;
 static char XARGV[64][1024];
 static const char* xargv_cmd[64];
 int PARAMCOUNT=0;
+
+extern int  hmain(int argc, char *argv[]);
+void parse_cmdline( const char *argv );
 
 void Add_Option(const char* option){
 	

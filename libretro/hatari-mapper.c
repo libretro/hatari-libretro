@@ -7,12 +7,25 @@
 
 #include "joy.h"
 
+//CORE VAR
+#ifdef _WIN32
+char slash = '\\';
+#else
+char slash = '/';
+#endif
+extern const char *retro_save_directory;
+extern const char *retro_system_directory;
+extern const char *retro_content_directory;
+
 //HATARI PROTOTYPES
+#include "configuration.h"
+#include "file.h"
 extern bool Dialog_DoProperty(void);
 extern void Screen_SetFullUpdate(void);
 extern void Main_HandleMouseMotion(void);
 extern void Main_UnInit(void);
 extern int  hmain(int argc, char *argv[]);
+extern int Reset_Cold(void);
 
 //TIME
 #ifdef PS3PORT
@@ -128,7 +141,7 @@ void gui_poll_events(){
 void save_bkg(){
 	//save bkg for screenshot
 	int i,j,k=0;	
-	unsigned char *ptr=(unsigned char *)&sdlscrn->pixels[0];
+	unsigned char *ptr=(unsigned char *)sdlscrn->pixels;
 
 	for(j=0;j<retroh;j++){
 		for(i=0;i<retrow*2;i++){		
@@ -209,12 +222,39 @@ SDL_Surface *prepare_texture(int w,int h,int b){
 	return bitmp;
 }      
 
+int LoadTosFromRetroSystemDir(){
+
+	char tmp_dir[256];
+
+	printf("Trying to TOS load from retro_system_directory\n");
+	if(retro_system_directory==NULL)sprintf(tmp_dir, "%s","./tos.img");
+	else sprintf(tmp_dir, "%s%c%s", retro_system_directory, slash,"tos.img");
+
+	printf("%s ",tmp_dir );
+	if(File_Exists(tmp_dir)==true){
+		printf("exist\n");
+		sprintf(ConfigureParams.Rom.szTosImageFileName,"%s",tmp_dir);
+		if (Reset_Cold())return -1;
+		return 0;
+	}
+	printf("not exist\n");
+	return -1;
+}
+
 void texture_init(){
 
 	memset(bmp, 0, sizeof(bmp));
 
-	gmx=(retrow/2 )-1;
+	gmx=(retrow/2)-1;
 	gmy=(retroh/2)-1;
+}
+
+void enter_gui(){	
+
+	save_bkg();
+
+	Dialog_DoProperty();
+	pauseg=0;
 }
 
 void pause_select(){
@@ -226,14 +266,6 @@ void pause_select(){
 	}
 }
 
-
-void enter_gui(){	
-
-	save_bkg();
-
-	Dialog_DoProperty();
-	pauseg=0;
-}
 
 void Print_Statut(){
 
