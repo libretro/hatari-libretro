@@ -784,11 +784,19 @@ static void Main_LoadInitialConfig(void)
 	psGlobalConfig = malloc(FILENAME_MAX);
 	if (psGlobalConfig)
 	{
+#ifdef __LIBRETRO__		
+		snprintf(psGlobalConfig, FILENAME_MAX, "%s%chatari.cfg",RETRO_DIR, PATHSEP);
+		printf("RetroConf:'%s'\n",psGlobalConfig);
+#else
+
 #if defined(__AMIGAOS4__)
 		strncpy(psGlobalConfig, CONFDIR"hatari.cfg", FILENAME_MAX);
 #else
 		snprintf(psGlobalConfig, FILENAME_MAX, CONFDIR"%chatari.cfg", PATHSEP);
 #endif
+
+#endif
+
 		/* Try to load the global configuration file */
 		Configuration_Load(psGlobalConfig);
 

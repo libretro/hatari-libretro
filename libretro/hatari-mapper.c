@@ -16,6 +16,7 @@ char slash = '/';
 extern const char *retro_save_directory;
 extern const char *retro_system_directory;
 extern const char *retro_content_directory;
+char RETRO_DIR[512];
 
 //HATARI PROTOTYPES
 #include "configuration.h"
@@ -227,8 +228,8 @@ int LoadTosFromRetroSystemDir(){
 	char tmp_dir[256];
 
 	printf("Trying to TOS load from retro_system_directory\n");
-	if(retro_system_directory==NULL)sprintf(tmp_dir, "%s","./tos.img");
-	else sprintf(tmp_dir, "%s%c%s", retro_system_directory, slash,"tos.img");
+
+	sprintf(tmp_dir, "%s%c%s", RETRO_DIR, slash,"tos.img");
 
 	printf("%s ",tmp_dir );
 	if(File_Exists(tmp_dir)==true){

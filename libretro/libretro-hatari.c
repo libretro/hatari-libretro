@@ -19,6 +19,7 @@ extern unsigned short int bmp[1024*1024];
 extern int STATUTON,SHOWKEY,SHIFTON,pauseg,SND ,snd_sampler;
 extern short signed int SNDBUF[1024*2];
 extern char RPATH[512];
+extern char RETRO_DIR[512];
 
 extern void update_input(void);
 extern void texture_init(void);
@@ -102,17 +103,6 @@ static void retro_wrap_emulator()
     }
 }
 
-void retro_shutdown_hatari(void)
-{
-	printf("SHUTDOWN\n");
-   	environ_cb(RETRO_ENVIRONMENT_SHUTDOWN, NULL);
-}
-
-
-void retro_reset(void){
-
-}
-
 void Emu_init(){
 
 #ifdef RETRO_AND
@@ -137,6 +127,17 @@ void Emu_init(){
 
 void Emu_uninit(){
 	texture_uninit();
+}
+
+void retro_shutdown_hatari(void)
+{
+	printf("SHUTDOWN\n");
+	texture_uninit();
+   	environ_cb(RETRO_ENVIRONMENT_SHUTDOWN, NULL);
+}
+
+void retro_reset(void){
+
 }
 
 void retro_init(void)
@@ -169,6 +170,9 @@ void retro_init(void)
 		// make retro_save_directory the same in case RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY is not implemented by the frontend
 		retro_save_directory=retro_system_directory;
 	}
+
+	if(retro_system_directory==NULL)sprintf(RETRO_DIR, "%s\0",".");
+	else sprintf(RETRO_DIR, "%s\0", retro_system_directory);
 
 	printf("Retro SYSTEM_DIRECTORY %s\n",retro_system_directory);
 	printf("Retro SAVE_DIRECTORY %s\n",retro_save_directory);

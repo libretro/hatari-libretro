@@ -15,6 +15,7 @@ extern int SND;
 //#define sysconf(a) a
 #endif
 
+extern char RETRO_DIR[512];
 extern char RPATH[512];
 extern long GetTicks(void);
 extern void pause_select();
