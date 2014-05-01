@@ -3,12 +3,14 @@
 #define HATARI_SDL_H
 
 //RETRO HACK
-#warning This is just an SDL wrapper for the retro core.
+//#warning This is just an SDL wrapper for the retro core.
 
 extern int Reset_Cold(void);
 extern int Reset_Warm(void);
 
+#include <unistd.h>
 #include <time.h>
+
 #include "SDL_types.h"
 #include "SDL_keyboard.h"
 #include "SDL_video.h"
@@ -18,6 +20,11 @@ extern int Reset_Warm(void);
 
 #define RGB565(r, g, b)  (((r) << (5+6)) | ((g) << 6) | (b))
 #define SDL_MapRGB(a, r, g, b) RGB565( (r)>>3, (g)>>3, (b)>>3)
+
+extern long GetTicks(void);
+extern void retro_fillrect(SDL_Surface * surf,SDL_Rect *rect,unsigned int col);
+extern SDL_Surface *prepare_texture(int w,int h,int b);
+extern int SDL_SaveBMP(SDL_Surface *surface,const char *file);
 
 typedef struct SDL_Event{
 Uint8 type;

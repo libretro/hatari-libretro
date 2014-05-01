@@ -15,8 +15,13 @@ extern int SND;
 //#define sysconf(a) a
 #endif
 
+extern char RETRO_DIR[512];
 extern char RPATH[512];
 extern long GetTicks(void);
+extern void pause_select();
+extern int LoadTosFromRetroSystemDir();
+extern void retro_shutdown_hatari(void);
+
 #include <unistd.h>
 
 #ifdef AND

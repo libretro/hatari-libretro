@@ -19,11 +19,17 @@ extern unsigned short int bmp[1024*1024];
 extern int STATUTON,SHOWKEY,SHIFTON,pauseg,SND ,snd_sampler;
 extern short signed int SNDBUF[1024*2];
 extern char RPATH[512];
+extern char RETRO_DIR[512];
 
 extern void update_input(void);
 extern void texture_init(void);
+extern void texture_uninit(void);
 extern void Emu_init();
 extern void Emu_uninit();
+
+const char *retro_save_directory;
+const char *retro_system_directory;
+const char *retro_content_directory;
 
 static retro_video_refresh_t video_cb;
 static retro_audio_sample_t audio_cb;
@@ -43,8 +49,6 @@ void retro_set_environment(retro_environment_t cb)
       { NULL, NULL },
    };
 
-   //bool no_rom = true;
-   //cb(RETRO_ENVIRONMENT_SET_SUPPORT_NO_GAME, &no_rom);
    cb(RETRO_ENVIRONMENT_SET_VARIABLES, variables);
 }
 
@@ -125,18 +129,64 @@ void Emu_uninit(){
 	texture_uninit();
 }
 
+void retro_shutdown_hatari(void)
+{
+	printf("SHUTDOWN\n");
+	texture_uninit();
+   	environ_cb(RETRO_ENVIRONMENT_SHUTDOWN, NULL);
+}
+
+void retro_reset(void){
+
+}
+
 void retro_init(void)
 {    	
+	const char *system_dir = NULL;
+  
+	if (environ_cb(RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY, &system_dir) && system_dir)
+	{
+		// if defined, use the system directory			
+		retro_system_directory=system_dir;		
+	}		   
+	
+	const char *content_dir = NULL;
+  
+	if (environ_cb(RETRO_ENVIRONMENT_GET_CONTENT_DIRECTORY, &content_dir) && content_dir)
+	{
+		// if defined, use the system directory			
+		retro_content_directory=content_dir;		
+	}			
+	
+	const char *save_dir = NULL;
+  
+	if (environ_cb(RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY, &save_dir) && save_dir)
+	{
+		// If save directory is defined use it, otherwise use system directory
+		retro_save_directory = *save_dir ? save_dir : retro_system_directory;      
+	}
+	else
+	{
+		// make retro_save_directory the same in case RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY is not implemented by the frontend
+		retro_save_directory=retro_system_directory;
+	}
+
+	if(retro_system_directory==NULL)sprintf(RETRO_DIR, "%s\0",".");
+	else sprintf(RETRO_DIR, "%s\0", retro_system_directory);
+
+	printf("Retro SYSTEM_DIRECTORY %s\n",retro_system_directory);
+	printf("Retro SAVE_DIRECTORY %s\n",retro_save_directory);
+	printf("Retro CONTENT_DIRECTORY %s\n",retro_content_directory);
+
 	enum retro_pixel_format fmt = RETRO_PIXEL_FORMAT_RGB565;
     	if (!environ_cb(RETRO_ENVIRONMENT_SET_PIXEL_FORMAT, &fmt))
     	{
     		fprintf(stderr, "RGB565 is not supported.\n");
-    		exit(0);//return false;
+    		exit(0);
     	}
 
 	Emu_init();
 	texture_init();
-
 }
 
 void retro_deinit(void)
@@ -201,13 +251,6 @@ void retro_set_audio_sample_batch(retro_audio_sample_batch_t cb)
 void retro_set_video_refresh(retro_video_refresh_t cb)
 {
    	video_cb = cb;
-}
-
-void retro_reset(void){}
-
-void retro_shutdown_hatari(void)
-{
-   	environ_cb(RETRO_ENVIRONMENT_SHUTDOWN, NULL);
 }
 
 void retro_run(void)
