@@ -4,8 +4,6 @@
 
 #include "STkeymap.h"
 
-#include "cmdline.c"
-
 cothread_t mainThread;
 cothread_t emuThread;
 
@@ -20,6 +18,8 @@ extern int STATUTON,SHOWKEY,SHIFTON,pauseg,SND ,snd_sampler;
 extern short signed int SNDBUF[1024*2];
 extern char RPATH[512];
 extern char RETRO_DIR[512];
+
+#include "cmdline.c"
 
 extern void update_input(void);
 extern void texture_init(void);
