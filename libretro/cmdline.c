@@ -28,7 +28,7 @@ int pre_main(const char *argv){
 
 	parse_cmdline(argv); 
 
-	bool Only1Arg =   ( ARGUC==1 )?1:0;
+	bool Only1Arg = strcmp(ARGUV[0],"hatari")==0?0:1;//  ( ARGUC==1 )?1:0;
 
 	for (int i = 0; i<64; i++)xargv_cmd[i]=NULL;
 
@@ -37,7 +37,7 @@ int pre_main(const char *argv){
 	if(Only1Arg){	
 		Add_Option("hatari");
 		Add_Option("--disk-a");
-		Add_Option(ARGUV[0]);
+		Add_Option(RPATH/*ARGUV[0]*/);
 	}
 	else { // Pass all cmdline args
 		for(int i=0;i<ARGUC;i++)
