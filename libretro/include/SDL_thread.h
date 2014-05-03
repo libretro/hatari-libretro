@@ -1272,7 +1272,7 @@ SDL_sem *SDL_CreateSemaphore(Uint32 initial_value)
 			sem = NULL;
 		}
 	} else {
-		SDL_OutOfMemory();
+		//SDL_OutOfMemory();
 	}
 	return(sem);
 }
@@ -1421,7 +1421,7 @@ SDL_mutex *SDL_CreateMutex(void)
 			mutex = NULL;
 		}
 	} else {
-		SDL_OutOfMemory();
+		//SDL_OutOfMemory();
 	}
 	return(mutex);
 }
@@ -1693,7 +1693,7 @@ int SDL_SYS_CreateThread(SDL_Thread *thread, void *args)
 #endif
 	pThreadStartParms pThreadParms = (pThreadStartParms)SDL_malloc(sizeof(tThreadStartParms));
 	if (!pThreadParms) {
-		SDL_OutOfMemory();
+		//SDL_OutOfMemory();
 		return(-1);
 	}
 

@@ -41,6 +41,15 @@ const char DlgFileSelect_fileid[] = "Hatari dlgFileSelect.c : " __DATE__ " " __T
 #define SCROLLOUT_ABOVE  1
 #define SCROLLOUT_UNDER  2
 
+int alphasort2(const struct dirent **d1, const struct dirent **d2)
+{
+	    const struct dirent *c1;
+	    const struct dirent *c2;
+	    c1 = *d1;
+	    c2 = *d2;
+	    return strcmp(c1->d_name, c2->d_name);
+}
+
 #define DLGPATH_SIZE 62
 static char dlgpath[DLGPATH_SIZE+1];    /* Path name in the dialog */
 
@@ -557,7 +566,7 @@ char* SDLGui_FileSelect(const char *path_and_name, char **zip_path, bool bAllowN
 			else
 			{
 				/* Load directory entries: */
-				entries = scandir(path, &files, 0, alphasort);
+				entries = scandir(path, &files, 0, alphasort2);
 			}
 			
 			/* Remove hidden files from the list if necessary: */
