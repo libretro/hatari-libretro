@@ -79,7 +79,7 @@
 #define HAVE_SCANDIR 1
 
 #ifdef __LIBRETRO__
-#if defined(AND) || defined(PS3PORT)
+#if defined(AND) || defined(PS3PORT) || defined(WIN32PORT)
 #undef HAVE_STATVFS
 #else
 #define HAVE_STATVFS 1
