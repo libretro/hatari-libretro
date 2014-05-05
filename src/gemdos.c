@@ -57,9 +57,6 @@ const char Gemdos_fileid[] = "Hatari gemdos.c : " __DATE__ " " __TIME__;
 #include "hatari-glue.h"
 #include "maccess.h"
 
-#if defined(WIN32PORT)
-extern int alphasort(const void *d1, const void *d2);
-#endif
 
 /* Maximum supported length of a GEMDOS path: */
 #define MAX_GEMDOS_PATH 256
