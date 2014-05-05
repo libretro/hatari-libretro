@@ -73,8 +73,9 @@
 //#define HAVE_NANOSLEEP 1
 
 /* Define to 1 if you have the 'alphasort' function. */
+#ifndef WIN32PORT
 #define HAVE_ALPHASORT 1
-
+#endif
 /* Define to 1 if you have the 'scandir' function. */
 #define HAVE_SCANDIR 1
 
