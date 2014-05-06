@@ -32,7 +32,7 @@ int pre_main(const char *argv)
 
    parse_cmdline(argv); 
 
-   nly1Arg = (strcmp(ARGUV[0],"hatari") == 0) ? 0 : 1;
+   Only1Arg = (strcmp(ARGUV[0],"hatari") == 0) ? 0 : 1;
 
    for (i = 0; i<64; i++)
       xargv_cmd[i] = NULL;
