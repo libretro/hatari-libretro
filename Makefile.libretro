@@ -238,7 +238,7 @@ HINCLUDES := -I./$(EMU)  -I./$(CPU)  -I./$(FALCON)  \
 	-I$(LIBRETRO) -I$(LIBRETRO)/include -I$(LIBUTILS) -I$(CPU_PREGEN)
 
 
-OBJECTS := $(LIBRETRO)/libretro-hatari.o $(LIBRETRO)/hatari-mapper.o $(LIBRETRO)/vkbd.o \
+OBJECTS := $(LIBRETRO)/libretro.o $(LIBRETRO)/hatari-mapper.o $(LIBRETRO)/vkbd.o \
 	$(LIBRETRO)/graph.o $(LIBRETRO)/bmp.o $(BUILD_APP)
 
 #END COMMON PART 
