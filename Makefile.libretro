@@ -43,10 +43,10 @@ else ifeq ($(platform), wii)
 		$(ZLIB_DIR)gzwrite.o $(ZLIB_DIR)infback.o $(ZLIB_DIR)inffast.o $(ZLIB_DIR)inflate.o \
 		$(ZLIB_DIR)trees.o $(ZLIB_DIR)inftrees.o $(ZLIB_DIR)uncompr.o $(ZLIB_DIR)uncompr.o $(ZLIB_DIR)zutil.o 
    CFLAGS += -DSDL_BYTEORDER=SDL_BIG_ENDIAN -DMSB_FIRST -DBYTE_ORDER=BIG_ENDIAN  -DBYTE_ORDER=BIG_ENDIAN \
-	-DWIIPORT=1 -DHAVE_MEMALIGN -DHAVE_ASPRINTF -I$(ZLIB_DIR) -I$(DEVKITPRO)/libogc/include \
+	-DHAVE_MEMALIGN -DHAVE_ASPRINTF -I$(ZLIB_DIR) -I$(DEVKITPRO)/libogc/include \
 	-D__powerpc__ -D__POWERPC__ -DGEKKO -DHW_RVL -mrvl -mcpu=750 -meabi -mhard-float -D__ppc__
    SHARED :=   -lm -lpthread -lc
-   PLATFLAGS :=  -D__LIBRETRO__ -DALIGN_DWORD -DWIIPORT
+   PLATFLAGS :=  -D__LIBRETRO__ -DALIGN_DWORD
 else ifeq ($(platform), ps3)
    TARGET := hatari_libretro_ps3.a
    CC = $(CELL_SDK)/host-win32/ppu/bin/ppu-lv2-gcc.exe
@@ -59,7 +59,7 @@ else ifeq ($(platform), ps3)
 		$(ZLIB_DIR)trees.o $(ZLIB_DIR)inftrees.o $(ZLIB_DIR)uncompr.o $(ZLIB_DIR)uncompr.o $(ZLIB_DIR)zutil.o 
    SHARED :=   -lm -lpthread -lc
    CFLAGS += -DSDL_BYTEORDER=SDL_BIG_ENDIAN -DMSB_FIRST -DBYTE_ORDER=BIG_ENDIAN  -DBYTE_ORDER=BIG_ENDIAN \
-	-D__CELLOS_LV2 -DPS3PORT=1 -DHAVE_MEMALIGN -DHAVE_ASPRINTF -I$(ZLIB_DIR) 
+	-D__CELLOS_LV2 -DHAVE_MEMALIGN -DHAVE_ASPRINTF -I$(ZLIB_DIR) 
    PLATFLAGS :=  -D__LIBRETRO__ -DALIGN_DWORD 
 else
    #CC = i586-mingw32msvc-gcc
@@ -238,7 +238,7 @@ HINCLUDES := -I./$(EMU)  -I./$(CPU)  -I./$(FALCON)  \
 	-I$(LIBRETRO) -I$(LIBRETRO)/include -I$(LIBUTILS) -I$(CPU_PREGEN)
 
 
-OBJECTS := $(LIBRETRO)/libretro-hatari.o $(LIBRETRO)/hatari-mapper.o $(LIBRETRO)/vkbd.o \
+OBJECTS := $(LIBRETRO)/libretro.o $(LIBRETRO)/hatari-mapper.o $(LIBRETRO)/vkbd.o \
 	$(LIBRETRO)/graph.o $(LIBRETRO)/bmp.o $(BUILD_APP)
 
 #END COMMON PART 

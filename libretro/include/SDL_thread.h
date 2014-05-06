@@ -48,7 +48,7 @@ typedef struct SDL_error
 } SDL_error;
 
 
-#ifdef PS3PORT
+#ifdef __CELLOS_LV2__
 
 #include <pthread.h>
 #include <semaphore.h>
@@ -579,7 +579,7 @@ SDL_CreateThread(int (SDLCALL * fn) (void *), void *data)
     return (thread);
 }
 
-#elif defined WIIPORT
+#elif defined(GEKKO)
 #include <sys/errno.h> 
 #include <unistd.h>
 #include <signal.h>

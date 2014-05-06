@@ -3,7 +3,7 @@ extern cothread_t mainThread;
 extern cothread_t emuThread;
 extern int pauseg;
 
-#ifdef PS3PORT
+#ifdef __CELLOS_LV2__
 #undef HAVE_GETTIMEOFDAY
 #undef HAVE_NANOSLEEP
 #endif
@@ -24,18 +24,16 @@ extern void retro_shutdown_hatari(void);
 
 #include <unistd.h>
 
-#ifdef AND
+#if defined(AND)
 #define CONFDIR "/mnt/sdcard/st"
     //#warning "conf dir for android"
-#else
-#ifdef PS3PORT
+#elif defined(__CELLOS_LV2__)
 #define CONFDIR "/dev_hdd0/HOMEBREW/ST"
 //#warning "conf dir for ps3"
-#elif defined(WIIPORT)
+#elif defined(GEKKO)
 #define CONFDIR "sd:/HOMEBREW/ST"
 #else
 #define CONFDIR "."
 //#warning "conf dir for linux"
-#endif //PS3PORT
-#endif //AND
+#endif
 
