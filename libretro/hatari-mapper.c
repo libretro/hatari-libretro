@@ -29,7 +29,7 @@ extern int  hmain(int argc, char *argv[]);
 extern int Reset_Cold(void);
 
 //TIME
-#ifdef PS3PORT
+#ifdef __CELLOS_LV2__
 #include "sys/sys_time.h"
 #include "sys/timer.h"
 #define usleep  sys_timer_usleep
@@ -100,7 +100,7 @@ long GetTicks(void)
 { // in MSec
 #ifndef _ANDROID_
 
-#ifdef PS3PORT
+#ifdef __CELLOS_LV2__
 
 	//#warning "GetTick PS3\n"
 
@@ -647,13 +647,13 @@ void input_gui()
 	if(MOUSEMODE==1){
 
 //TODO FIX THIS :(
-#if defined(PS3PORT) 
+#if defined(__CELLOS_LV2__) 
  		//Slow Joypad Mouse Emulation for PS3
 		static int pair=-1;
 	 	pair=-pair;
 		if(pair==1)return;
 		PAS=1;
-#elif defined(WIIPORT) 
+#elif defined(GEKKO) 
 		PAS=1;
 #endif
 
