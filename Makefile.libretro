@@ -65,7 +65,7 @@ else
    #CC = i586-mingw32msvc-gcc
    CC = x86_64-w64-mingw32-gcc
    PLATFLAGS :=  -D__LIBRETRO__ -DLSB_FIRST -DALIGN_DWORD -DWIN32PORT -DWIN32
-   TARGET := retro-hatari.dll
+   TARGET := hatari_libretro.dll
    SHARED := -shared -static-libgcc -s -Wl,--version-script=$(LIBRETRO)/link.T -Wl,--no-undefined 
 endif
 
